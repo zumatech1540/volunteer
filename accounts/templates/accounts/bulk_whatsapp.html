@@ -1,0 +1,39 @@
+{% extends 'accounts\base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card p-4 shadow-sm">
+
+        <h3>💬 Bulk WhatsApp Messaging</h3>
+
+        {% if success_count %}
+            <div class="alert alert-success">
+                Sent to {{ success_count }} voters successfully
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Message</label>
+            <textarea name="message" class="form-control mb-3" rows="5" required></textarea>
+
+            <label>Filter Recipients</label>
+            <select name="filter" class="form-control mb-3">
+                <option value="all">All Voters</option>
+                <option value="supporter">Supporters Only</option>
+                <option value="undecided">Undecided Only</option>
+            </select>
+
+            <button class="btn btn-success w-100">
+                📩 Send WhatsApp Messages
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

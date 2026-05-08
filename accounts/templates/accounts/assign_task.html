@@ -1,0 +1,87 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="card p-4 shadow-lg border-0">
+
+        <h3 class="mb-3">🧑‍💼 Assign Task</h3>
+
+        <!-- MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- TITLE -->
+            <label class="form-label">Task Title</label>
+            <input type="text" name="title" class="form-control mb-3" placeholder="Enter task title" required>
+
+            <!-- DESCRIPTION -->
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control mb-3" rows="3" placeholder="Task details..."></textarea>
+
+            <!-- ASSIGN TO -->
+            <label class="form-label">Assign To</label>
+            <select name="assigned_to" class="form-control mb-3" required>
+                <option value="">-- Select Volunteer or Leader --</option>
+                {% for v in volunteers %}
+                    <option value="{{ v.id }}">
+                        {{ v.first_name }} {{ v.last_name }} ({{ v.role }})
+                    </option>
+                {% endfor %}
+            </select>
+
+            <!-- EVENT -->
+            <label class="form-label">Related Event</label>
+            <select name="event" class="form-control mb-3">
+                <option value="">None</option>
+                {% for e in events %}
+                    <option value="{{ e.id }}">{{ e.title }} ({{ e.approval_status }})</option>
+                {% endfor %}
+            </select>
+
+            <div class="row">
+
+                <!-- PRIORITY -->
+                <div class="col-md-6">
+                    <label class="form-label">Priority</label>
+                    <select name="priority" class="form-control mb-3">
+                        <option value="low">🟢 Low</option>
+                        <option value="medium" selected>🟡 Medium</option>
+                        <option value="high">🔴 High</option>
+                    </select>
+                </div>
+
+                <!-- DUE DATE -->
+                <div class="col-md-6">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" name="due_date" class="form-control mb-3" id="dueDate">
+                </div>
+
+            </div>
+
+            <button class="btn btn-success w-100">
+                🚀 Assign Task
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- BLOCK PAST DATES -->
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("dueDate").setAttribute("min", today);
+</script>
+
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "accounts\base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3>⚙ Admin Control Panel</h3>
+
+    <div class="row">
+
+        <!-- ================= ADD USER ================= -->
+        <div class="col-md-4">
+
+            <div class="card p-3 mb-4">
+
+                <h5>➕ Add User</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_user">
+
+                    <input type="text" name="first_name" class="form-control mb-2" placeholder="First Name" required>
+                    <input type="text" name="last_name" class="form-control mb-2" placeholder="Last Name">
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                    <input type="text" name="phone" class="form-control mb-2" placeholder="Phone">
+
+                    <select name="role" class="form-control mb-2">
+                        <option value="volunteer">Volunteer</option>
+                        <option value="leader">Leader</option>
+                    </select>
+
+                    <button class="btn btn-primary w-100">Create User</button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- ================= ATTENDANCE ================= -->
+        <div class="col-md-4">
+
+            <div class="card p-3 mb-4">
+
+                <h5>📋 Quick Attendance</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="attendance">
+
+                    <button class="btn btn-success w-100">
+                        ✔ Mark Attendance
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- ================= TASK CONTROL ================= -->
+        <div class="col-md-4">
+
+            <div class="card p-3 mb-4">
+
+                <h5>📌 Task Control</h5>
+
+                <a href="{% url 'assign_task' %}" class="btn btn-primary w-100 mb-2">
+                    ➕ Assign Task
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ================= USERS ================= -->
+        <div class="col-md-12">
+
+            <div class="card p-3">
+
+                <h5>👥 All Users Management</h5>
+
+                <table class="table table-bordered mt-3">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Tasks</th>
+                            <th>Control</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for user in users %}
+                    <tr>
+
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+
+                        <td>
+                            {% if user.is_superuser %}
+                                <span class="badge bg-dark">Admin</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ user.role }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ user.email }}</td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ user.total_tasks }} Tasks
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'user_tasks_admin' user.id %}" class="btn btn-success btn-sm">
+                                📋 View Tasks
+                            </a>
+
+                            {% if not user.is_superuser %}
+
+                                {% if user.role == "volunteer" %}
+                                    <a href="{% url 'make_leader' user.id %}" class="btn btn-primary btn-sm">
+                                        Make Leader
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'make_volunteer' user.id %}" class="btn btn-warning btn-sm">
+                                        Make Volunteer
+                                    </a>
+                                {% endif %}
+
+                                <a href="{% url 'make_admin' user.id %}" class="btn btn-dark btn-sm">
+                                    Make Admin
+                                </a>
+
+                                <a href="{% url 'delete_user' user.id %}" class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

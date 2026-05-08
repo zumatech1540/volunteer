@@ -1,0 +1,1176 @@
+# ================= DJANGO CORE =================
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db.models import Count, Q
+from django.utils import timezone
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User, County, Constituency, Ward, PollingStation
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib import messages
+from django.db.models import Count, Q
+from .models import User, Event, Task, EventParticipant
+from django.db.models import Count, Sum
+from .models import Event, Task, User, EventParticipant, EventBudget
+import pandas as pd
+from django.http import HttpResponse
+from .models import User
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import User
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import User
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import User
+from .models import Voter
+from .utils import send_sms
+from .utils import send_whatsapp_message
+
+from django.shortcuts import render
+from .models import Project, Event
+from django.contrib.auth.decorators import login_required
+
+from .models import Voter, Ward, SMSLog
+from .utils import send_sms
+
+
+
+# ================= MODELS =================
+from .models import (
+    User,
+    County,
+    Constituency,
+    Ward,
+    PollingStation,
+    Event,
+    Task,
+    TaskMessage,
+    Notification,
+    Voter
+)
+
+# ================= FORMS =================
+from .forms import (
+    RegisterForm,
+    EventForm,
+    TaskForm,
+    VoterForm
+)
+
+# ================= DECORATORS =================
+from .decorators import (
+    admin_required,
+    leader_required,
+    volunteer_required
+)
+
+# ================= UTILITIES =================
+
+
+
+def home(request):
+    projects = Project.objects.all()
+    recent_events = Event.objects.order_by('-date')[:6]
+
+    context = {
+        "projects": projects,
+        "recent_events": recent_events,
+        "total_communities": 10,
+        "total_volunteers": 100,
+        "total_projects": 25,
+    }
+
+    return render(request, "accounts/home.html", context)
+
+# REGISTER
+
+
+
+
+def register_view(request):
+
+    county = County.objects.filter(name__icontains="Laikipia").first()
+    constituencies = Constituency.objects.filter(county=county) if county else Constituency.objects.none()
+
+    if request.method == "POST":
+
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+
+        constituency_id = request.POST.get("constituency")
+        ward_id = request.POST.get("ward")
+        polling_station_id = request.POST.get("polling_station")
+
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match")
+            return redirect("register")
+
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "User already exists")
+            return redirect("register")
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password1,
+            first_name=first_name,
+            last_name=last_name
+        )
+
+        user.role = "volunteer"
+        user.phone = phone
+        user.county = county
+
+        if constituency_id:
+            user.constituency_id = constituency_id
+        if ward_id:
+            user.ward_id = ward_id
+        if polling_station_id:
+            user.polling_station_id = polling_station_id
+
+        user.save()
+
+        login(request, user)
+
+        return redirect("volunteer_dashboard")
+
+    return render(request, "accounts/register.html", {
+        "constituencies": constituencies
+    })
+    
+
+from django.http import JsonResponse
+from .models import Constituency, Ward, PollingStation
+
+
+def load_constituencies(request):
+    county_id = request.GET.get('county_id')
+    data = list(Constituency.objects.filter(county_id=county_id).values('id', 'name'))
+    return JsonResponse(data, safe=False)
+
+
+def load_wards(request):
+    constituency_id = request.GET.get('constituency_id')
+    data = list(Ward.objects.filter(constituency_id=constituency_id).values('id', 'name'))
+    return JsonResponse(data, safe=False)
+
+
+def load_polling_stations(request):
+    ward_id = request.GET.get('ward_id')
+    data = list(PollingStation.objects.filter(ward_id=ward_id).values('id', 'name'))
+    return JsonResponse(data, safe=False)
+
+
+# LOGIN
+
+
+
+
+
+def login_view(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            # ================= SAFETY FIX =================
+            # Ensure superuser always behaves as admin
+            if user.is_superuser:
+                user.role = "admin"
+                user.save()
+
+            # ================= REDIRECT LOGIC =================
+            if user.is_superuser or user.role == "admin":
+                return redirect("admin_dashboard")
+
+            elif user.role == "leader":
+                return redirect("leader_dashboard")
+
+            else:
+                return redirect("volunteer_dashboard")
+
+        else:
+            messages.error(request, "Invalid login details")
+
+    return render(request, "accounts/login.html")
+
+
+def about(request):
+    return render(request, 'accounts/about.html')
+
+def volunteers(request):
+    return render(request, 'accounts/volunteers.html')
+
+def events(request):
+    return render(request, 'accounts/events.html')
+
+
+def contact(request):
+    return render(request, 'accounts/contact.html')
+
+
+
+# LOGOUT
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+
+
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+
+# 🛡️ ADMIN DASHBOARD
+
+
+
+@login_required
+@admin_required
+def admin_dashboard(request):
+
+    users = User.objects.all()
+    events = Event.objects.all()
+    tasks = Task.objects.all()
+    budgets = EventBudget.objects.select_related('event')
+
+    # ================= USERS =================
+    total_members = users.count()
+    total_voters = users.filter(role='volunteer').count()
+
+    # ================= EVENTS =================
+    total_events = events.count()
+    pending_events = events.filter(approval_status='pending').count()
+
+    total_attendance = EventParticipant.objects.count()
+
+    # ================= TASKS =================
+    total_tasks = tasks.count()
+    completed_tasks = tasks.filter(status='completed').count()
+    in_progress_tasks = tasks.filter(status='in_progress').count()
+    pending_tasks = tasks.filter(status='pending').count()
+
+    # ================= FINANCE =================
+    total_estimated_budget = budgets.aggregate(
+        total=Sum('estimated_budget')
+    )['total'] or 0
+
+    total_spent = budgets.aggregate(
+        total=Sum('actual_spent')
+    )['total'] or 0
+
+    remaining_budget = total_estimated_budget - total_spent
+
+    # ================= CONTEXT =================
+    context = {
+        # USERS
+        'users': users,
+        'members': users,
+        'total_members': total_members,
+        'total_voters': total_voters,
+
+        # EVENTS
+        'events': events,
+        'total_events': total_events,
+        'pending_events': pending_events,
+        'total_attendance': total_attendance,
+
+        # TASKS
+        'tasks': tasks,
+        'total_tasks': total_tasks,
+        'completed_tasks': completed_tasks,
+        'in_progress_tasks': in_progress_tasks,
+        'pending_tasks': pending_tasks,
+
+        # FINANCE (NEW)
+        'budgets': budgets,
+        'total_estimated_budget': total_estimated_budget,
+        'total_spent': total_spent,
+        'remaining_budget': remaining_budget,
+    }
+
+    return render(request, 'accounts/admin_dashboard.html', context)
+
+# 👨‍🏫 LEADER DASHBOARD
+
+
+
+@login_required
+@leader_required
+def leader_dashboard(request):
+
+    # ================= EVENTS =================
+    events = Event.objects.filter(
+        created_by=request.user
+    ).order_by('-date')
+
+    total_events = events.count()
+
+    pending_events = events.filter(
+        approval_status='pending'
+    ).count()
+
+    approved_events = events.filter(
+        approval_status='approved'
+    ).count()
+
+    # ================= MEMBERS =================
+    members = User.objects.filter(
+        role__in=['volunteer', 'leader']
+    )[:10]
+
+    total_members = User.objects.count()
+
+    # ================= TASKS =================
+    tasks = Task.objects.filter(
+        assigned_by=request.user
+    )
+
+    total_tasks = tasks.count()
+
+    pending_tasks = tasks.filter(
+        status='pending'
+    ).count()
+
+    in_progress_tasks = tasks.filter(
+        status='in_progress'
+    ).count()
+
+    completed_tasks = tasks.filter(
+        status='completed'
+    ).count()
+
+    # ================= VOTERS =================
+    total_voters = 0
+    supporters = 0
+    undecided = 0
+    opponents = 0
+    ward_analysis = []
+
+    try:
+        voters = Voter.objects.all()
+
+        total_voters = voters.count()
+
+        supporters = voters.filter(
+            support_status='supporter'
+        ).count()
+
+        undecided = voters.filter(
+            support_status='undecided'
+        ).count()
+
+        opponents = voters.filter(
+            support_status='opponent'
+        ).count()
+
+        ward_analysis = voters.values(
+            'ward__name'
+        ).annotate(
+
+            total=Count('id'),
+
+            supporters=Count(
+                'id',
+                filter=Q(support_status='supporter')
+            ),
+
+            undecided=Count(
+                'id',
+                filter=Q(support_status='undecided')
+            ),
+
+            opponents=Count(
+                'id',
+                filter=Q(support_status='opponent')
+            ),
+        )
+
+    except:
+        pass
+
+    # ================= PROJECTS =================
+    projects = []
+
+    try:
+        projects = Project.objects.all()[:5]
+    except:
+        pass
+
+    # ================= NOTIFICATIONS =================
+    notifications = [
+
+        "New volunteers registered",
+
+        f"{pending_events} events waiting approval",
+
+        f"{pending_tasks} pending tasks remaining",
+
+    ]
+
+    context = {
+
+        # notifications
+        'notifications': notifications,
+
+        # events
+        'events': events,
+        'total_events': total_events,
+        'pending_events': pending_events,
+        'approved_events': approved_events,
+
+        # members
+        'members': members,
+        'total_members': total_members,
+
+        # tasks
+        'total_tasks': total_tasks,
+        'pending_tasks': pending_tasks,
+        'in_progress_tasks': in_progress_tasks,
+        'completed_tasks': completed_tasks,
+
+        # voters
+        'total_voters': total_voters,
+        'supporters': supporters,
+        'undecided': undecided,
+        'opponents': opponents,
+        'ward_analysis': ward_analysis,
+
+        # projects
+        'projects': projects,
+    }
+
+    return render(
+        request,
+        'accounts/leader_dashboard.html',
+        context
+    )
+
+
+# 🙋 VOLUNTEER DASHBOARD
+
+@login_required
+def volunteer_dashboard(request):
+
+    user = request.user
+
+    tasks = Task.objects.filter(assigned_to=user).order_by('-created_at')
+
+    total_tasks = tasks.count()
+    completed_tasks = tasks.filter(status="completed").count()
+    pending_tasks = tasks.filter(status="pending").count()
+
+    # progress %
+    completed_percent = 0
+    if total_tasks > 0:
+        completed_percent = round((completed_tasks / total_tasks) * 100, 1)
+
+    events = Event.objects.all().order_by('date')[:5]
+
+    notifications = Notification.objects.filter(user=user).order_by('-created_at')[:10]
+
+    context = {
+        "tasks": tasks,
+        "total_tasks": total_tasks,
+        "completed_tasks": completed_tasks,
+        "pending_tasks": pending_tasks,
+        "completed_percent": completed_percent,
+        "events": events,
+        "notifications": notifications,
+    }
+
+    return render(request, "accounts/volunteer_dashboard.html", context)
+
+
+# 🙋                                        create_event
+@login_required
+def create_event(request):
+
+    # only admin and leader can create events
+    if request.user.role not in ['admin', 'leader']:
+        return redirect('home')
+
+    form = EventForm()
+
+    if request.method == "POST":
+        form = EventForm(request.POST)
+
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.created_by = request.user
+
+            # leaders create but still pending approval
+            if request.user.role == 'leader':
+                event.approval_status = 'pending'
+
+            # admins can auto-approve if you want (optional)
+            elif request.user.role == 'admin':
+                event.approval_status = 'approved'
+
+            event.save()
+            return redirect('events')
+
+    return render(request, 'accounts/create_event.html', {'form': form})
+
+
+
+
+
+@login_required
+@leader_required
+def leader_create_event(request):
+
+    if request.method == "POST":
+
+        title = request.POST.get("title")
+        location = request.POST.get("location")
+        date = request.POST.get("date")
+        description = request.POST.get("description")
+
+        Event.objects.create(
+            title=title,
+            location=location,
+            date=date,
+            description=description,
+
+            # 🔥 IMPORTANT: leader-created events always start as pending
+            approval_status="pending",
+
+            created_by=request.user
+        )
+
+        return redirect("leader_dashboard")
+
+    return render(request, "accounts/create_event.html")
+
+
+
+@login_required
+@admin_required
+def events(request):
+
+    events = Event.objects.all()
+
+    return render(request, 'accounts/events.html', {'events': events})
+
+
+
+@login_required
+def approve_event(request, event_id):
+
+    event = get_object_or_404(Event, id=event_id)
+
+    event.approval_status = 'approved'
+    event.approved_by = request.user
+    event.approval_date = timezone.now()
+    event.save()
+
+    # TODO: notification system later
+    return redirect('admin_dashboard')
+
+@login_required
+def reject_event(request, event_id):
+
+    event = get_object_or_404(Event, id=event_id)
+
+    event.approval_status = 'rejected'
+    event.rejected_by = request.user
+    event.approval_date = timezone.now()
+    event.save()
+
+    return redirect('admin_dashboard')
+
+
+@login_required
+def delete_event(request, event_id):
+
+    event = get_object_or_404(Event, id=event_id)
+
+    # optional audit trail
+    event.deleted_by = request.user
+    event.save()
+
+    event.delete()
+
+    return redirect('admin_dashboard')
+
+
+
+@login_required
+def join_event(request, id):
+
+    event = get_object_or_404(Event, id=id)
+
+    # 🚫 prevent duplicate join
+    already_joined = EventParticipant.objects.filter(
+        event=event,
+        user=request.user
+    ).exists()
+
+    if not already_joined:
+        EventParticipant.objects.create(
+            event=event,
+            user=request.user
+        )
+
+    return redirect('volunteer_dashboard')
+
+
+@login_required
+@admin_required
+def manage_users(request):
+
+    query = request.GET.get('q')
+
+    if query:
+        users = User.objects.filter(username__icontains=query)
+    else:
+        users = User.objects.all()
+
+    return render(request, 'accounts/manage_users.html', {'users': users})
+
+
+@login_required
+@admin_required
+def change_role(request, user_id, role):
+
+    user = get_object_or_404(User, id=user_id)
+
+    user.role = role
+    user.save()
+
+    return redirect('manage_users')
+
+
+@login_required
+def delete_user(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+
+    # 🚨 safety check: prevent deleting yourself
+    if request.user.id == user.id:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect("manage_users")
+
+    user.delete()
+
+    messages.success(request, "User deleted successfully.")
+
+    return redirect("manage_users")
+
+
+
+
+
+@login_required
+def make_admin(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+
+    user.role = "admin"
+    user.is_staff = True
+    user.is_superuser = False  # keep controlled unless you really want full Django admin access
+
+    user.save()
+
+    return redirect("manage_users")
+
+
+@login_required
+def make_leader(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+
+    user.role = "leader"
+    user.is_staff = False
+    user.is_superuser = False
+
+    user.save()
+
+    return redirect("manage_users")
+
+@login_required
+def make_volunteer(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+
+    user.role = "volunteer"
+    user.is_staff = False
+    user.is_superuser = False
+
+    user.save()
+
+    return redirect("manage_users")
+
+@login_required
+@admin_required
+def assign_task(request):
+
+    form = TaskForm()
+
+    if request.method == "POST":
+        form = TaskForm(request.POST)
+
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.assigned_by = request.user
+            task.save()
+
+            # 🔔 NOTIFICATION (MUST BE INSIDE FUNCTION)
+            create_notification(
+                user=task.assigned_to,
+                title="New Task Assigned",
+                message=f"You have been assigned: {task.title}",
+                notification_type="task_assigned",
+                task=task
+            )
+
+            return redirect('admin_dashboard')
+
+    return render(request, 'accounts/assign_task.html', {'form': form})
+
+@login_required
+def my_tasks(request):
+
+    tasks = Task.objects.filter(assigned_to=request.user)
+
+    return render(request, 'accounts/my_tasks.html', {'tasks': tasks})
+
+
+
+@login_required
+def update_task_status(request, task_id, status):
+
+    task = get_object_or_404(Task, id=task_id)
+
+    # 🔐 SECURITY: only assigned user can update
+    if task.assigned_to != request.user:
+        return redirect('home')
+
+    # 🔒 VALIDATE STATUS (prevents fake URLs like /done123)
+    valid_statuses = ['pending', 'in_progress', 'completed']
+    if status not in valid_statuses:
+        return redirect('my_tasks')
+
+    # ================= UPDATE TASK =================
+    task.status = status
+    task.save()
+
+    # ================= NOTIFICATIONS =================
+
+    # Notify task creator (leader/admin)
+    create_notification(
+        user=task.assigned_by,
+        title="Task Status Updated",
+        message=f"{task.assigned_to.first_name} updated '{task.title}' to {status}",
+        notification_type="task_completed" if status == "completed" else "message",
+        task=task
+    )
+
+    # Optional: notify user when completed
+    if status == "completed":
+        create_notification(
+            user=task.assigned_to,
+            title="Task Completed",
+            message=f"You marked '{task.title}' as completed",
+            notification_type="task_completed",
+            task=task
+        )
+
+    return redirect('my_tasks')
+
+
+
+
+@login_required
+def task_chat(request, task_id):
+
+    task = get_object_or_404(Task, id=task_id)
+
+    # 🔒 Security: only assigned people can access chat
+    if request.user != task.assigned_to and request.user != task.assigned_by:
+        return redirect('home')
+
+    # ================= SEND MESSAGE =================
+    if request.method == "POST":
+        message_text = request.POST.get('message')
+
+        if message_text:  # prevent empty messages
+
+            msg = TaskMessage.objects.create(
+                task=task,
+                sender=request.user,
+                message=message_text
+            )
+
+            # 🔔 NOTIFY OTHER USER
+            other_user = (
+                task.assigned_to
+                if request.user != task.assigned_to
+                else task.assigned_by
+            )
+
+            create_notification(
+                user=other_user,
+                title="New Task Message",
+                message=f"Message on: {task.title}",
+                notification_type="message",
+                task=task
+            )
+
+        return redirect('task_chat', task_id=task.id)
+
+    # ================= LOAD CHAT =================
+    messages = task.messages.all().order_by('created_at')
+
+    return render(request, 'accounts/task_chat.html', {
+        'task': task,
+        'messages': messages
+    })
+
+
+def start_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    # only assigned user or admin/leader can start
+    if request.user != task.assigned_to and not request.user.is_staff:
+        messages.error(request, "You are not allowed to start this task.")
+        return redirect('my_tasks')
+
+    task.status = 'in_progress'
+    task.save()
+
+    messages.success(request, "Task started successfully.")
+    return redirect('my_tasks')
+
+
+def complete_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    if request.user != task.assigned_to and not request.user.is_staff:
+        messages.error(request, "You are not allowed to complete this task.")
+        return redirect('my_tasks')
+
+    task.status = 'completed'
+    task.save()
+
+    messages.success(request, "Task marked as completed 🎉")
+    return redirect('my_tasks')
+
+
+
+def notifications(request):
+    notes = Notification.objects.filter(user=request.user)
+    return render(request, "notifications.html", {"notifications": notes})
+
+
+
+
+@login_required
+def register_voter(request):
+
+    if request.method == "POST":
+
+        Voter.objects.create(
+            first_name=request.POST['first_name'],
+            last_name=request.POST.get('last_name'),
+            phone=request.POST['phone'],
+            ward_id=request.POST.get('ward'),
+            polling_station_id=request.POST.get('polling_station'),
+            created_by=request.user
+        )
+
+        messages.success(request, "Voter successfully registered!")
+        return redirect('leader_dashboard')
+
+    return render(request, 'accounts/register_voter.html', {
+        'wards': Ward.objects.all(),
+        'stations': PollingStation.objects.all()
+    })
+
+
+
+
+@login_required
+def voter_dashboard(request):
+
+    user = request.user
+
+    # ================= ACCESS CONTROL =================
+    if user.role not in ['admin', 'leader']:
+        return redirect('home')
+
+    # ================= DATA FILTERING =================
+    if user.role == "leader":
+        voters = Voter.objects.filter(created_by=user)
+    else:
+        voters = Voter.objects.all()
+
+    # ================= STATS =================
+    supporters = voters.filter(support_status="supporter").count()
+    undecided = voters.filter(support_status="undecided").count()
+    opponents = voters.filter(support_status="opponent").count()
+
+    ward_data = voters.values('ward__name').annotate(
+        total=Count('id'),
+        supporters=Count('id', filter=Q(support_status='supporter')),
+        undecided=Count('id', filter=Q(support_status='undecided')),
+        opponents=Count('id', filter=Q(support_status='opponent')),
+    )
+
+    return render(request, "accounts/voter_dashboard.html", {
+        "voters": voters,
+        "supporters": supporters,
+        "undecided": undecided,
+        "opponents": opponents,
+        "ward_data": ward_data,
+    })
+
+@login_required
+def voter_list(request):
+
+    user = request.user
+
+    if user.role not in ['admin', 'leader']:
+        return redirect('home')
+
+    if user.role == "leader":
+        voters = Voter.objects.filter(created_by=user)
+    else:
+        voters = Voter.objects.all()
+
+    return render(request, 'accounts/voter_list.html', {
+        'voters': voters
+    })
+
+
+
+
+@login_required
+def bulk_sms(request):
+
+    if request.user.role not in ['admin', 'leader'] and not request.user.is_superuser:
+        messages.error(request, "Access denied")
+        return redirect("home")
+
+    wards = Ward.objects.all()
+
+    if request.method == "POST":
+
+        sms_type = request.POST.get("sms_type")
+
+        ward_id = request.POST.get("ward")
+
+        support_status = request.POST.get("support_status")
+
+        individual_phone = request.POST.get("individual_phone")
+
+        message = request.POST.get("message")
+
+        voters = Voter.objects.all()
+
+        # ================= SEND BY WARD =================
+        if sms_type == "ward" and ward_id:
+            voters = voters.filter(ward_id=ward_id)
+
+        # ================= SUPPORT STATUS =================
+        elif sms_type == "supporters":
+            voters = voters.filter(
+                support_status=support_status
+            )
+
+        # ================= INDIVIDUAL =================
+        elif sms_type == "individual":
+
+            send_sms(
+                [individual_phone],
+                message
+            )
+
+            messages.success(
+                request,
+                "SMS sent successfully"
+            )
+
+            return redirect("bulk_sms")
+
+        # ================= BULK/PERSONALIZED =================
+        phone_numbers = []
+
+        for voter in voters:
+
+            personalized_message = message.replace(
+                "{name}",
+                voter.full_name
+            )
+
+            send_sms(
+                [voter.phone_number],
+                personalized_message
+            )
+
+            phone_numbers.append(voter.phone_number)
+
+        # ================= SAVE LOG =================
+        SMSLog.objects.create(
+            sender=request.user,
+            recipient_count=len(phone_numbers),
+            message=message,
+            ward_id=ward_id if ward_id else None,
+            support_status=support_status
+        )
+
+        messages.success(
+            request,
+            f"SMS sent to {len(phone_numbers)} recipients"
+        )
+
+        return redirect("bulk_sms")
+
+    context = {
+        "wards": wards
+    }
+
+    return render(
+        request,
+        "accounts/bulk_sms.html",
+        context
+    )
+
+@login_required
+def bulk_whatsapp(request):
+
+    if request.method == "POST":
+
+        message = request.POST.get("message")
+        filter_type = request.POST.get("filter")
+
+        # FILTER VOTERS
+        if filter_type == "supporter":
+            voters = Voter.objects.filter(support_status="supporter")
+
+        elif filter_type == "undecided":
+            voters = Voter.objects.filter(support_status="undecided")
+
+        else:
+            voters = Voter.objects.all()
+
+        # SEND MESSAGES
+        success_count = 0
+
+        for v in voters:
+            if v.phone:
+                result = send_whatsapp_message(v.phone, message)
+                success_count += 1
+
+        return render(request, "accounts/bulk_whatsapp.html", {
+            "success_count": success_count
+        })
+
+    return render(request, "accounts/bulk_whatsapp.html")
+
+
+
+
+
+@login_required
+@leader_required
+def voter_analytics_dashboard(request):
+
+    # ================= GLOBAL STATS =================
+    total_voters = Voter.objects.count()
+
+    supporters = Voter.objects.filter(support_status='supporter').count()
+    undecided = Voter.objects.filter(support_status='undecided').count()
+    opponents = Voter.objects.filter(support_status='opponent').count()
+
+    # ================= WARD ANALYSIS =================
+    ward_stats = Voter.objects.values('ward__name').annotate(
+        total=Count('id'),
+        supporters=Count('id', filter=Q(support_status='supporter')),
+        undecided=Count('id', filter=Q(support_status='undecided')),
+        opponents=Count('id', filter=Q(support_status='opponent')),
+    ).order_by('-total')
+
+    # ================= POLLING STATION ANALYSIS =================
+    station_stats = Voter.objects.values('polling_station__name').annotate(
+        total=Count('id'),
+        supporters=Count('id', filter=Q(support_status='supporter')),
+        undecided=Count('id', filter=Q(support_status='undecided')),
+        opponents=Count('id', filter=Q(support_status='opponent')),
+    ).order_by('-total')
+
+    # ================= INSIGHTS =================
+    strongest_ward = ward_stats.first()
+    weakest_ward = ward_stats.last()
+
+    context = {
+        'total_voters': total_voters,
+        'supporters': supporters,
+        'undecided': undecided,
+        'opponents': opponents,
+
+        'ward_stats': ward_stats,
+        'station_stats': station_stats,
+
+        'strongest_ward': strongest_ward,
+        'weakest_ward': weakest_ward,
+    }
+
+    return render(request, 'accounts/leader_charts.html', context)
+
+
+
+
+def download_users_excel(request):
+
+    # Get user data
+    users = User.objects.all().values(
+        'first_name',
+        'last_name',
+        'email',
+        'username',
+        'role',
+        'phone'
+    )
+
+    # Convert to DataFrame
+    df = pd.DataFrame(users)
+
+    # Create response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
+    response['Content-Disposition'] = 'attachment; filename=users_data.xlsx'
+
+    # Save Excel file
+    df.to_excel(response, index=False)
+
+    return response

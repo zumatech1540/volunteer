@@ -1,0 +1,589 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voluntee - Community Platform</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- ICONS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Segoe UI', sans-serif;
+            background:#f5f7fb;
+            color:#1e293b;
+            padding-top:75px;
+            overflow-x:hidden;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        /* =====================================
+                NAVBAR
+        ===================================== */
+
+        .navbar{
+            background:linear-gradient(90deg,#0d6efd,#0a58ca);
+            padding:12px 0;
+            box-shadow:0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand{
+            color:white !important;
+            font-weight:700;
+            font-size:24px;
+            letter-spacing:0.5px;
+        }
+
+        .navbar-brand span{
+            color:#ffd43b;
+        }
+
+        .nav-link{
+            color:white !important;
+            margin-right:8px;
+            padding:8px 14px !important;
+            border-radius:10px;
+            transition:0.3s;
+            font-weight:500;
+        }
+
+        .nav-link:hover{
+            background:rgba(255,255,255,0.15);
+            transform:translateY(-2px);
+        }
+
+        .nav-link.active{
+            background:rgba(255,255,255,0.2);
+        }
+
+        .dropdown-menu{
+            border:none;
+            border-radius:14px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.12);
+            overflow:hidden;
+        }
+
+        .dropdown-item{
+            padding:12px 16px;
+            transition:0.2s;
+        }
+
+        .dropdown-item:hover{
+            background:#f1f5f9;
+            padding-left:20px;
+        }
+
+        /* =====================================
+                BUTTONS
+        ===================================== */
+
+        .btn{
+            border-radius:12px;
+            padding:10px 20px;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+        }
+
+        .btn-light{
+            color:#0d6efd;
+        }
+
+        .btn-success{
+            background:#16a34a;
+            border:none;
+        }
+
+        .btn-success:hover{
+            background:#15803d;
+        }
+
+        /* =====================================
+                CONTENT AREA
+        ===================================== */
+
+        .main-content{
+            min-height:70vh;
+        }
+
+        /* =====================================
+                ALERTS
+        ===================================== */
+
+        .alert{
+            border:none;
+            border-radius:14px;
+        }
+
+        /* =====================================
+                FOOTER
+        ===================================== */
+
+        .footer{
+            background:#0f172a;
+            color:#e2e8f0;
+            margin-top:80px;
+        }
+
+        .footer-title{
+            font-weight:700;
+            margin-bottom:18px;
+        }
+
+        .footer-link{
+            color:#cbd5e1;
+            display:block;
+            margin-bottom:10px;
+            transition:0.3s;
+        }
+
+        .footer-link:hover{
+            color:white;
+            padding-left:5px;
+        }
+
+        .footer-text{
+            color:#94a3b8;
+            line-height:1.8;
+        }
+
+        .social-links{
+            display:flex;
+            gap:12px;
+            margin-top:15px;
+        }
+
+        .social-icon{
+            width:42px;
+            height:42px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:12px;
+            background:#1e293b;
+            color:white;
+            transition:0.3s;
+            font-size:16px;
+        }
+
+        .social-icon:hover{
+            background:#2563eb;
+            color:white;
+            transform:translateY(-3px);
+        }
+
+        .footer-bottom{
+            border-top:1px solid rgba(255,255,255,0.08);
+            margin-top:40px;
+            padding-top:20px;
+            text-align:center;
+            color:#94a3b8;
+            font-size:14px;
+        }
+
+        /* =====================================
+                MOBILE
+        ===================================== */
+
+        @media(max-width:991px){
+
+            .navbar-nav{
+                margin-top:15px;
+            }
+
+            .nav-link{
+                margin-bottom:6px;
+            }
+
+        }
+
+        @media(max-width:768px){
+
+            body{
+                padding-top:70px;
+            }
+
+            .navbar-brand{
+                font-size:20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =====================================
+            NAVBAR (SAFE VERSION)
+===================================== -->
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+    <div class="container">
+
+        <!-- LOGO -->
+        <a class="navbar-brand"
+           href="{% if request.user.is_authenticated %}
+
+                    {% if request.user.is_superuser or request.user.role == 'admin' %}
+                        {% url 'admin_dashboard' %}
+
+                    {% elif request.user.role == 'leader' %}
+                        {% url 'leader_dashboard' %}
+
+                    {% else %}
+                        {% url 'volunteer_dashboard' %}
+
+                    {% endif %}
+
+                 {% else %}
+                    {% url 'home' %}
+                 {% endif %}">
+
+            🌍 <span>Volunteer</span>
+
+        </a>
+
+        <!-- TOGGLER -->
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <!-- NAV MENU -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                <!-- ================= PUBLIC LINKS (SAFE) ================= -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">About</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'events' %}">Events</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'volunteers' %}">Volunteers</a>
+                </li>
+
+                <!-- ================= ADMIN / LEADER ONLY ================= -->
+                {% if request.user.is_authenticated and request.user.role in "admin leader" or request.user.is_superuser %}
+
+                    {% if 'voter_list' in request.resolver_match.view_name|default:'' %}
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'voter_list' %}">
+                            Voters
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'voter_analytics' %}">
+                            Analytics
+                        </a>
+                    </li>
+
+                {% endif %}
+
+                <!-- ================= AUTH ================= -->
+                {% if request.user.is_authenticated %}
+
+                    <li class="nav-item dropdown ms-lg-3">
+
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           data-bs-toggle="dropdown">
+
+                            👤 {{ request.user.first_name }}
+
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            {% if request.user.is_superuser or request.user.role == "admin" %}
+
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'admin_dashboard' %}">
+                                        Admin Dashboard
+                                    </a>
+                                </li>
+
+                            {% elif request.user.role == "leader" %}
+
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'leader_dashboard' %}">
+                                        Leader Dashboard
+                                    </a>
+                                </li>
+
+                            {% else %}
+
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'volunteer_dashboard' %}">
+                                        My Dashboard
+                                    </a>
+                                </li>
+
+                            {% endif %}
+
+                            <li>
+                                <a class="dropdown-item" href="{% url 'notifications' %}">
+                                    Notifications
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    Logout
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                {% else %}
+
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-light btn-sm" href="{% url 'login' %}">
+                            Login
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-success btn-sm" href="{% url 'register' %}">
+                            Register
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- =====================================
+            MESSAGES
+===================================== -->
+
+<div class="container mt-3">
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+<!-- =====================================
+            PAGE CONTENT
+===================================== -->
+
+<div class="main-content">
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+<!-- =====================================
+            FOOTER
+===================================== -->
+
+<footer class="footer pt-5 pb-4">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <!-- ABOUT -->
+            <div class="col-md-4">
+
+                <h4 class="footer-title">
+                    🌍 Voluntee
+                </h4>
+
+                <p class="footer-text">
+
+                    Community-driven volunteer management platform connecting
+                    leaders, volunteers and communities to create real impact
+                    across Laikipia County and beyond.
+
+                </p>
+
+                <div class="social-links">
+
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- QUICK LINKS -->
+            <div class="col-md-4">
+
+                <h5 class="footer-title">
+                    Quick Links
+                </h5>
+
+                <a class="footer-link" href="{% url 'home' %}">
+                    Home
+                </a>
+
+                <a class="footer-link" href="{% url 'about' %}">
+                    About
+                </a>
+
+                <a class="footer-link" href="{% url 'events' %}">
+                    Events
+                </a>
+
+                <a class="footer-link" href="{% url 'volunteers' %}">
+                    Volunteers
+                </a>
+
+                {% if request.user.is_authenticated %}
+
+                    {% if request.user.role == "leader" or request.user.is_superuser or request.user.role == "admin" %}
+
+                        <a class="footer-link"
+                           href="{% url 'voter_list' %}">
+                            Voters
+                        </a>
+
+                        <a class="footer-link"
+                           href="{% url 'voter_analytics' %}">
+                            Analytics
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+            <!-- CONTACT -->
+            <div class="col-md-4">
+
+                <h5 class="footer-title">
+                    Contact
+                </h5>
+
+                <p class="footer-text mb-2">
+                    <i class="fa fa-location-dot"></i>
+                    Laikipia County, Kenya
+                </p>
+
+                <p class="footer-text mb-2">
+                    <i class="fa fa-envelope"></i>
+                    info@voluntee.org
+                </p>
+
+                <p class="footer-text mb-2">
+                    <i class="fa fa-phone"></i>
+                    +254 700 000000
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="footer-bottom">
+
+            © 2026 Voluntee System —
+            Built for Community Empowerment & Civic Engagement
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- BOOTSTRAP -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- AOS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<script>
+    AOS.init({
+        duration: 900,
+        once: true
+    });
+</script>
+
+</body>
+</html>

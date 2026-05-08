@@ -1,0 +1,106 @@
+{% extends 'accounts\base.html' %}
+{% block content %}
+
+<div class="container my-5" style="max-width:750px;">
+
+    <div class="card shadow-lg p-4">
+
+        <!-- ================= TITLE ================= -->
+        <h3 class="mb-3">➕ Create Community Event</h3>
+
+        <!-- ================= MESSAGES ================= -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <!-- ================= FORM ================= -->
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <!-- TITLE -->
+            <div class="mb-3">
+                <label class="form-label">Event Title</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label class="form-label">Event Description</label>
+                <textarea name="description" rows="4" class="form-control" required></textarea>
+            </div>
+
+            <!-- LOCATION -->
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" required>
+            </div>
+
+            <!-- DATE -->
+            <div class="mb-3">
+                <label class="form-label">Event Date</label>
+                <input type="date" name="date" class="form-control" required>
+            </div>
+
+            <!-- IMAGE -->
+            <div class="mb-3">
+                <label class="form-label">Event Image</label>
+                <input type="file" name="image" class="form-control" id="imageInput">
+            </div>
+
+            <!-- IMAGE PREVIEW -->
+            <img id="preview"
+                 style="width:100%; display:none; margin-bottom:15px; border-radius:10px;"/>
+
+            <!-- BUTTONS -->
+            <div class="d-flex gap-2">
+
+                <button type="submit"
+                        class="btn btn-success w-100"
+                        onclick="this.innerText='Creating...';">
+
+                    Create Event
+
+                </button>
+
+                <a href="{% url 'leader_dashboard' %}"
+                   class="btn btn-secondary w-100">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ================= IMAGE PREVIEW SCRIPT ================= -->
+<script>
+document.getElementById("imageInput").addEventListener("change", function(event) {
+
+    const file = event.target.files[0];
+
+    if (file) {
+        const preview = document.getElementById("preview");
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    }
+
+});
+</script>
+
+{% endblock %}

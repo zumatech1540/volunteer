@@ -1,0 +1,135 @@
+{% extends 'accounts\base.html' %}
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- ================= HEADER ================= -->
+    <div class="p-4 mb-4 bg-primary text-white rounded-4 shadow-sm">
+
+        <h2 class="fw-bold">👋 Welcome {{ request.user.first_name }}</h2>
+
+        <p class="mb-0">
+            Your personal volunteer dashboard — track tasks, events and progress
+        </p>
+
+    </div>
+
+    <!-- ================= STATS ================= -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <h6>Total Tasks</h6>
+                <h2 class="text-primary">{{ total_tasks }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <h6>Completed</h6>
+                <h2 class="text-success">{{ completed_tasks }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <h6>Pending</h6>
+                <h2 class="text-warning">{{ pending_tasks }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= PROGRESS BAR ================= -->
+    <div class="card p-3 mb-4 shadow-sm">
+
+        <h5>📊 My Progress</h5>
+
+        <div class="progress" style="height: 25px;">
+
+            <div class="progress-bar bg-success"
+                 role="progressbar"
+                 style="width: {{ completed_percent }}%;">
+
+                {{ completed_percent }}%
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= TASKS ================= -->
+    <div class="mb-4">
+
+        <h5 class="mb-3">📌 My Tasks</h5>
+
+        {% for task in tasks %}
+
+            <div class="card mb-2 p-3 shadow-sm">
+
+                <div class="d-flex justify-content-between">
+
+                    <strong>{{ task.title }}</strong>
+
+                    {% if task.status == "completed" %}
+                        <span class="badge bg-success">Completed</span>
+                    {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% endif %}
+
+                </div>
+
+                <p class="text-muted mb-0">
+                    {{ task.description }}
+                </p>
+
+            </div>
+
+        {% empty %}
+            <p class="text-muted">No tasks assigned yet.</p>
+        {% endfor %}
+
+    </div>
+
+    <!-- ================= EVENTS ================= -->
+    <div class="card p-3 mb-4 shadow-sm">
+
+        <h5>📅 Upcoming Events</h5>
+
+        {% for event in events %}
+
+            <div class="border-bottom py-2">
+
+                <strong>{{ event.title }}</strong><br>
+
+                <small class="text-muted">{{ event.date }}</small>
+
+            </div>
+
+        {% empty %}
+            <p class="text-muted">No events available.</p>
+        {% endfor %}
+
+    </div>
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <div class="card p-3 shadow-sm">
+
+        <h5>🔔 Notifications</h5>
+
+        {% for n in notifications %}
+
+            <div class="alert alert-light border mb-2">
+                {{ n.message }}
+            </div>
+
+        {% empty %}
+            <p class="text-muted">No notifications</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

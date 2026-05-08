@@ -1,0 +1,187 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card border-0 shadow-lg">
+
+        <div class="card-body p-5">
+
+            <h2 class="mb-4">
+                📩 Smart Bulk SMS Center
+            </h2>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <!-- SMS TYPE -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Send SMS To
+                    </label>
+
+                    <select name="sms_type"
+                            class="form-select"
+                            id="smsType">
+
+                        <option value="all">
+                            All Voters
+                        </option>
+
+                        <option value="ward">
+                            Specific Ward
+                        </option>
+
+                        <option value="supporters">
+                            Support Status
+                        </option>
+
+                        <option value="individual">
+                            Individual Person
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- WARD -->
+                <div class="mb-3" id="wardField" style="display:none;">
+
+                    <label class="form-label">
+                        Select Ward
+                    </label>
+
+                    <select name="ward"
+                            class="form-select">
+
+                        <option value="">
+                            Choose Ward
+                        </option>
+
+                        {% for ward in wards %}
+
+                        <option value="{{ ward.id }}">
+                            {{ ward.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <!-- SUPPORT STATUS -->
+                <div class="mb-3"
+                     id="supportField"
+                     style="display:none;">
+
+                    <label class="form-label">
+                        Support Status
+                    </label>
+
+                    <select name="support_status"
+                            class="form-select">
+
+                        <option value="supporter">
+                            Supporters
+                        </option>
+
+                        <option value="undecided">
+                            Undecided
+                        </option>
+
+                        <option value="opponent">
+                            Opponents
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- INDIVIDUAL -->
+                <div class="mb-3"
+                     id="individualField"
+                     style="display:none;">
+
+                    <label class="form-label">
+                        Phone Number
+                    </label>
+
+                    <input type="text"
+                           name="individual_phone"
+                           class="form-control"
+                           placeholder="+2547XXXXXXXX">
+
+                </div>
+
+                <!-- MESSAGE -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        SMS Message
+                    </label>
+
+                    <textarea
+                        name="message"
+                        class="form-control"
+                        rows="6"
+                        required
+                    ></textarea>
+
+                    <small class="text-muted">
+                        Use {name} for personalized messages.
+                    </small>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    Send SMS
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const smsType = document.getElementById("smsType");
+
+const wardField = document.getElementById("wardField");
+
+const supportField = document.getElementById("supportField");
+
+const individualField = document.getElementById("individualField");
+
+smsType.addEventListener("change", function(){
+
+    wardField.style.display = "none";
+    supportField.style.display = "none";
+    individualField.style.display = "none";
+
+    if(this.value === "ward"){
+        wardField.style.display = "block";
+    }
+
+    if(this.value === "supporters"){
+        supportField.style.display = "block";
+    }
+
+    if(this.value === "individual"){
+        individualField.style.display = "block";
+    }
+
+});
+
+</script>
+
+{% endblock %}

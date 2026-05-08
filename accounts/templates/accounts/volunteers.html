@@ -1,0 +1,211 @@
+{% extends 'accounts\base.html' %}
+{% block content %}
+
+<div class="container-fluid my-4">
+
+    <!-- ================= HEADER ================= -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h3>🌍 Volunteer Operations Center</h3>
+
+        <div class="text-muted">
+            Live field monitoring system
+        </div>
+
+    </div>
+
+    <!-- ================= SUMMARY CARDS ================= -->
+    <div class="row mb-3">
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center">
+                <h6>Total Volunteers</h6>
+                <h3>{{ volunteers|length }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center">
+                <h6>Active Wards</h6>
+                <h3>{{ ward_count|default:0 }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center">
+                <h6>High Activity</h6>
+                <h3 class="text-success">{{ active_volunteers|default:0 }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center">
+                <h6>Coverage</h6>
+                <h3 class="text-primary">{{ coverage_rate|default:0 }}%</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= MAIN GRID ================= -->
+    <div class="row">
+
+        <!-- ================= LEFT PANEL ================= -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm p-3" style="height: 720px; overflow-y:auto;">
+
+                <h5 class="mb-3">👥 Volunteer Directory</h5>
+
+                <!-- SEARCH -->
+                <input type="text" id="searchBox"
+                       class="form-control mb-3"
+                       placeholder="Search volunteer...">
+
+                {% for v in volunteers %}
+
+                <div class="border rounded p-2 mb-2 hover-card">
+
+                    <b>{{ v.first_name }} {{ v.last_name }}</b><br>
+
+                    <small>💼 {{ v.profession|default:"Not set" }}</small><br>
+
+                    <small>
+                        📍 {{ v.ward.name|default:"No ward assigned" }}
+                    </small><br>
+
+                    {% if v.activity_score %}
+                        <small class="text-success">⭐ Score: {{ v.activity_score }}</small>
+                    {% else %}
+                        <small class="text-muted">No activity yet</small>
+                    {% endif %}
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted">No volunteers found.</p>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- ================= RIGHT PANEL ================= -->
+        <div class="col-md-8">
+
+            <div class="card shadow-sm p-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                    <h5>🗺️ Field Intelligence Map</h5>
+
+                    <span class="badge bg-dark">Laikipia Region</span>
+
+                </div>
+
+                <div id="map" style="height: 720px; border-radius: 12px;"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= STYLES ================= -->
+<style>
+
+.hover-card {
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.hover-card:hover {
+    background: #f3f4f6;
+    transform: scale(1.02);
+}
+
+</style>
+
+<!-- ================= LEAFLET MAP ================= -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+
+let map = L.map('map', {
+    center: [-0.3609, 36.6409],
+    zoom: 9,
+    minZoom: 8,
+    maxZoom: 12,
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap & CartoDB'
+}).addTo(map);
+
+let heatData = [];
+
+// LOAD DATA
+fetch("/accounts/api/volunteer-map/")
+.then(res => res.json())
+.then(data => {
+
+    data.forEach(station => {
+
+        if (station.lat && station.lng) {
+
+            let marker = L.marker([station.lat, station.lng]).addTo(map);
+
+            let volunteersList = "";
+
+            if (station.volunteers && station.volunteers.length > 0) {
+                volunteersList = station.volunteers
+                    .map(v => `👤 ${v.name}`)
+                    .join("<br>");
+            } else {
+                volunteersList = "No volunteers";
+            }
+
+            marker.bindPopup(`
+                <h6>📍 ${station.name}</h6>
+                <b>👥 ${station.count} Volunteers</b>
+                <hr>
+                ${volunteersList}
+            `);
+
+            heatData.push([station.lat, station.lng, station.count]);
+        }
+    });
+
+    if (heatData.length > 0) {
+        L.heatLayer(heatData, {
+            radius: 25,
+            blur: 15,
+            maxZoom: 12
+        }).addTo(map);
+    }
+
+});
+
+</script>
+
+<!-- ================= SEARCH ================= -->
+<script>
+document.getElementById("searchBox").addEventListener("keyup", function () {
+
+    let value = this.value.toLowerCase();
+    let cards = document.querySelectorAll(".hover-card");
+
+    cards.forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(value)
+            ? "block"
+            : "none";
+    });
+
+});
+</script>
+
+{% endblock %}

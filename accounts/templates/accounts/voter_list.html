@@ -1,0 +1,223 @@
+{% extends 'accounts\base.html' %}
+{% block content %}
+
+<div class="container-fluid my-4">
+
+   <!-- ================= HEADER ================= -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h3>🗳 Voter Intelligence Dashboard</h3>
+
+    <div class="d-flex gap-2">
+
+        <a href="{% url 'bulk_sms' %}" class="btn btn-success btn-sm">
+            📩 Send Bulk SMS
+        </a>
+
+        <a href="{% url 'bulk_whatsapp' %}" class="btn btn-success btn-sm">
+            💬 Send Bulk WhatsApp
+        </a>
+
+    </div>
+
+</div>
+
+    <!-- ================= SUMMARY CARDS ================= -->
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow-sm">
+                <h6>Total Voters</h6>
+                <h3>{{ total_voters }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow-sm">
+                <h6>Supporters</h6>
+                <h3 class="text-success">{{ supporters }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow-sm">
+                <h6>Undecided</h6>
+                <h3 class="text-warning">{{ undecided }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow-sm">
+                <h6>Opponents</h6>
+                <h3 class="text-danger">{{ opponents }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= CHARTS ================= -->
+    <div class="row mb-4">
+
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>📊 Voter Distribution</h5>
+                <canvas id="voterChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm">
+                <h5>📍 Ward Performance</h5>
+
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Ward</th>
+                            <th>Total</th>
+                            <th>Support</th>
+                            <th>Undecided</th>
+                            <th>Opposition</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for w in ward_analysis %}
+                        <tr>
+                            <td>{{ w.ward__name }}</td>
+                            <td>{{ w.total }}</td>
+                            <td class="text-success">{{ w.supporters }}</td>
+                            <td class="text-warning">{{ w.undecided }}</td>
+                            <td class="text-danger">{{ w.opponents }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= INSIGHTS ================= -->
+    <div class="card p-3 shadow-sm mb-4">
+
+        <h5>💡 Campaign Insights (AI Suggestions)</h5>
+
+        <ul>
+            <li>Focus on wards with high undecided voters — they convert easily.</li>
+            <li>Increase door-to-door engagement in weak wards.</li>
+            <li>Use WhatsApp broadcast for supporters mobilization.</li>
+            <li>Organize small local meetings in low-support regions.</li>
+            <li>Follow up opponents with issue-based messaging.</li>
+        </ul>
+
+    </div>
+
+    <!-- ================= FILTERS ================= -->
+    <div class="card p-3 shadow-sm mb-4">
+
+        <h5>🔎 Filter Voters</h5>
+
+        <form method="GET" class="row">
+
+            <div class="col-md-3">
+                <input type="text" name="search" class="form-control" placeholder="Search name or phone">
+            </div>
+
+            <div class="col-md-3">
+                <select name="status" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="supporter">Supporter</option>
+                    <option value="undecided">Undecided</option>
+                    <option value="opponent">Opponent</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select name="ward" class="form-control">
+                    <option value="">All Wards</option>
+                    {% for w in wards %}
+                        <option value="{{ w.id }}">{{ w.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Apply Filters</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- ================= VOTER TABLE ================= -->
+    <div class="card p-3 shadow-sm">
+
+        <h5>👥 Voter List</h5>
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Ward</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for v in voters %}
+                <tr>
+                    <td>{{ v.first_name }} {{ v.last_name }}</td>
+                    <td>{{ v.phone }}</td>
+                    <td>{{ v.ward.name }}</td>
+
+                    <td>
+                        {% if v.support_status == "supporter" %}
+                            <span class="badge bg-success">Supporter</span>
+                        {% elif v.support_status == "undecided" %}
+                            <span class="badge bg-warning text-dark">Undecided</span>
+                        {% else %}
+                            <span class="badge bg-danger">Opponent</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary">📩 SMS</a>
+                        <a href="#" class="btn btn-sm btn-success">💬 WhatsApp</a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ================= CHART JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+new Chart(document.getElementById('voterChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Supporters', 'Undecided', 'Opponents'],
+        datasets: [{
+            data: [
+                {{ supporters }},
+                {{ undecided }},
+                {{ opponents }}
+            ]
+        }]
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,424 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ================= HEADER ================= -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+        <div>
+            <h2 class="fw-bold">
+                📊 Leader Dashboard
+            </h2>
+
+            <p class="text-muted">
+                Welcome back, {{ request.user.first_name }}
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <a href="{% url 'create_event' %}" class="btn btn-primary">
+                ➕ Create Event
+            </a>
+
+            <a href="{% url 'assign_task' %}" class="btn btn-warning">
+              🧑 Assign Task
+             </a>
+
+        </div>
+
+    </div>
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-3">🔔 Notifications</h5>
+
+            <ul class="mb-0">
+
+                {% for note in notifications %}
+                    <li>{{ note }}</li>
+                {% empty %}
+                    <li>No new notifications</li>
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- ================= QUICK ACTIONS ================= -->
+    <div class="mb-4 d-flex flex-wrap gap-2">
+
+        <a href="{% url 'register_voter' %}" class="btn btn-outline-primary">
+            ➕ Add Voter
+        </a>
+
+        <a href="{% url 'voter_list' %}" class="btn btn-outline-dark">
+            🗳 View Voters
+        </a>
+
+        <a href="{% url 'leader_charts' %}" class="btn btn-outline-secondary">
+            📊 Analytics
+        </a>
+
+        <a href="{% url 'leader_create_event' %}" class="btn btn-info">
+             📅 Create Event
+        </a>
+
+    </div>
+
+    <!-- ================= MAIN STATS ================= -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Total Events</h6>
+
+                <h2 class="fw-bold text-primary">
+                    {{ total_events }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Pending Events</h6>
+
+                <h2 class="fw-bold text-warning">
+                    {{ pending_events }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Approved Events</h6>
+
+                <h2 class="fw-bold text-success">
+                    {{ approved_events }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Total Members</h6>
+
+                <h2 class="fw-bold text-dark">
+                    {{ total_members }}
+                </h2>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= VOTER STATS ================= -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Supporters</h6>
+
+                <h2 class="text-success">
+                    {{ supporters }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Undecided</h6>
+
+                <h2 class="text-warning">
+                    {{ undecided }}
+                </h2>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-center p-3">
+
+                <h6>Opponents</h6>
+
+                <h2 class="text-danger">
+                    {{ opponents }}
+                </h2>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= TASK CONTROL ================= -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h4>🧑‍💼 Task Control Center</h4>
+
+                <a href="{% url 'assign_task' %}" class="btn btn-sm btn-warning">
+                    Assign New Task
+                </a>
+
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 text-center">
+
+                        <h6>Total Tasks</h6>
+
+                        <h3>{{ total_tasks }}</h3>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 text-center">
+
+                        <h6>Pending</h6>
+
+                        <h3 class="text-warning">
+                            {{ pending_tasks }}
+                        </h3>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 text-center">
+
+                        <h6>In Progress</h6>
+
+                        <h3 class="text-primary">
+                            {{ in_progress_tasks }}
+                        </h3>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3 text-center">
+
+                        <h6>Completed</h6>
+
+                        <h3 class="text-success">
+                            {{ completed_tasks }}
+                        </h3>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= CHARTS ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 p-3">
+
+                <h5 class="mb-3">
+                    📊 Voter Distribution
+                </h5>
+
+                <canvas id="supportChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 p-3">
+
+                <h5 class="mb-3">
+                    📊 Task Status
+                </h5>
+
+                <canvas id="taskChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="row g-3">
+
+        <!-- EVENTS -->
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h5 class="mb-3">📅 Recent Events</h5>
+
+                {% for e in events %}
+
+                    <div class="border-bottom pb-2 mb-2">
+
+                        <strong>{{ e.title }}</strong><br>
+
+                        <small class="text-muted">
+                            {{ e.date }} | {{ e.location }}
+                        </small>
+
+                        <p class="mt-2">
+                            {{ e.description|truncatechars:80 }}
+                        </p>
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No events available</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- MEMBERS -->
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h5 class="mb-3">👥 Members</h5>
+
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for m in members %}
+
+                        <tr>
+
+                            <td>
+                                {{ m.first_name }} {{ m.last_name }}
+                            </td>
+
+                            <td>
+                                {{ m.role }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 p-3 h-100">
+
+                <h5 class="mb-3">📌 Projects</h5>
+
+                {% for project in projects %}
+
+                    <div class="border-bottom pb-2 mb-2">
+
+                        <strong>{{ project.title }}</strong><br>
+
+                        <small class="text-muted">
+                            {{ project.location }}
+                        </small>
+
+                        <p class="mt-2">
+                            {{ project.description|truncatechars:60 }}
+                        </p>
+
+                    </div>
+
+                {% empty %}
+
+                    <p>No projects</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= CHART SCRIPT ================= -->
+<script>
+
+// VOTER CHART
+new Chart(document.getElementById('supportChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Supporters', 'Undecided', 'Opponents'],
+        datasets: [{
+            data: [
+                {{ supporters }},
+                {{ undecided }},
+                {{ opponents }}
+            ]
+        }]
+    }
+});
+
+// TASK CHART
+new Chart(document.getElementById('taskChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Pending', 'In Progress', 'Completed'],
+        datasets: [{
+            label: 'Tasks',
+            data: [
+                {{ pending_tasks }},
+                {{ in_progress_tasks }},
+                {{ completed_tasks }}
+            ]
+        }]
+    }
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,379 @@
+
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold text-primary">
+                <i class="fa fa-chart-line"></i>
+                Leader Analytics Dashboard
+            </h1>
+            <p class="text-muted mb-0">
+                Voter insights, campaign performance, ward analysis and growth strategy.
+            </p>
+        </div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-users fa-2x text-primary mb-3"></i>
+                    <h2 class="fw-bold">{{ total_voters }}</h2>
+                    <p class="text-muted">Total Voters</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-thumbs-up fa-2x text-success mb-3"></i>
+                    <h2 class="fw-bold">{{ supporters }}</h2>
+                    <p class="text-muted">Supporters</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-question-circle fa-2x text-warning mb-3"></i>
+                    <h2 class="fw-bold">{{ undecided }}</h2>
+                    <p class="text-muted">Undecided</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-thumbs-down fa-2x text-danger mb-3"></i>
+                    <h2 class="fw-bold">{{ opponents }}</h2>
+                    <p class="text-muted">Opponents</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-5">
+
+        <!-- PIE CHART -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h4 class="fw-bold text-primary">
+                        Voter Distribution
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- BAR CHART -->
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h4 class="fw-bold text-success">
+                        Ward Performance
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- IMPROVEMENT STRATEGY -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-header bg-danger text-white rounded-top-4">
+                    <h4 class="mb-0">
+                        <i class="fa fa-triangle-exclamation"></i>
+                        Areas Needing Improvement
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    {% for ward in ward_stats %}
+
+                        {% if ward.undecided > ward.supporters %}
+
+                            <div class="border rounded-3 p-3 mb-3 bg-light">
+
+                                <h5 class="fw-bold text-danger">
+                                    {{ ward.ward__name }}
+                                </h5>
+
+                                <p class="mb-1">
+                                    Undecided voters are higher than supporters.
+                                </p>
+
+                                <small class="text-muted">
+                                    Focus on door-to-door campaigns, community meetings,
+                                    youth engagement and WhatsApp mobilization.
+                                </small>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-header bg-success text-white rounded-top-4">
+                    <h4 class="mb-0">
+                        <i class="fa fa-lightbulb"></i>
+                        Campaign Recommendations
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-primary">
+                            Increase Supporters
+                        </h5>
+                        <p class="text-muted">
+                            Organize local events and recruit more volunteers in wards
+                            with low supporter percentages.
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-warning">
+                            Convert Undecided Voters
+                        </h5>
+                        <p class="text-muted">
+                            Use targeted messaging, WhatsApp campaigns and community
+                            outreach programs.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bold text-success">
+                            Maintain Strong Wards
+                        </h5>
+                        <p class="text-muted">
+                            Continue engagement in wards with many supporters to keep
+                            turnout high.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- WARD TABLE -->
+    <div class="card shadow border-0 rounded-4 mb-5">
+
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">
+                <i class="fa fa-map-location-dot"></i>
+                Ward Analysis
+            </h4>
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Ward</th>
+                        <th>Total</th>
+                        <th>Supporters</th>
+                        <th>Undecided</th>
+                        <th>Opponents</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for ward in ward_stats %}
+
+                    <tr>
+                        <td>{{ ward.ward__name }}</td>
+                        <td>{{ ward.total }}</td>
+                        <td class="text-success fw-bold">{{ ward.supporters }}</td>
+                        <td class="text-warning fw-bold">{{ ward.undecided }}</td>
+                        <td class="text-danger fw-bold">{{ ward.opponents }}</td>
+
+                        <td>
+                            {% if ward.supporters > ward.undecided %}
+                                <span class="badge bg-success">Strong</span>
+                            {% else %}
+                                <span class="badge bg-danger">Needs Work</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    // PIE CHART
+    const pieCtx = document.getElementById('pieChart');
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Supporters', 'Undecided', 'Opponents'],
+            datasets: [{
+                data: [
+                    {{ supporters }},
+                    {{ undecided }},
+                    {{ opponents }}
+                ],
+                backgroundColor: [
+                    '#198754',
+                    '#ffc107',
+                    '#dc3545'
+                ]
+            }]
+        }
+    });
+
+
+    // BAR CHART
+    const barCtx = document.getElementById('barChart');
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for ward in ward_stats %}
+                    '{{ ward.ward__name }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Supporters',
+                data: [
+                    {% for ward in ward_stats %}
+                        {{ ward.supporters }},
+                    {% endfor %}
+                ],
+                backgroundColor: '#0d6efd'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+</script>
+
+{% endblock %}
+```
+
+# views.py
+
+```python
+@login_required
+@leader_required
+
+def voter_analytics_dashboard(request):
+
+    total_voters = Voter.objects.count()
+
+    supporters = Voter.objects.filter(
+        support_status='supporter'
+    ).count()
+
+    undecided = Voter.objects.filter(
+        support_status='undecided'
+    ).count()
+
+    opponents = Voter.objects.filter(
+        support_status='opponent'
+    ).count()
+
+    ward_stats = Voter.objects.values(
+        'ward__name'
+    ).annotate(
+
+        total=Count('id'),
+
+        supporters=Count(
+            'id',
+            filter=Q(support_status='supporter')
+        ),
+
+        undecided=Count(
+            'id',
+            filter=Q(support_status='undecided')
+        ),
+
+        opponents=Count(
+            'id',
+            filter=Q(support_status='opponent')
+        ),
+
+    ).order_by('-supporters')
+
+    context = {
+        'total_voters': total_voters,
+        'supporters': supporters,
+        'undecided': undecided,
+        'opponents': opponents,
+        'ward_stats': ward_stats,
+    }
+
+    return render(
+        request,
+        'accounts/voter_analytics_dashboard.html',
+        context
+    )
+```
+
+# urls.py
+
+```python
+path(
+    'leader-charts/',
+    views.voter_analytics_dashboard,
+    name='leader_charts'
+),
+```
