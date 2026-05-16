@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin 
 from .models import (
     User,
     County,
@@ -10,7 +10,8 @@ from .models import (
     Task,
     TaskMessage,
     Notification,
-    Voter
+    Voter,
+    GroundVoice,
 )
 
 
@@ -25,3 +26,4 @@ admin.site.register(Task)
 admin.site.register(TaskMessage)
 admin.site.register(Notification)
 admin.site.register(Voter)
+admin.site.register(GroundVoice)

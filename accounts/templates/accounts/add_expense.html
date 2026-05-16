@@ -1,0 +1,79 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <h3>➕ Add Expense</h3>
+
+    <div class="card p-4 shadow-sm mt-3">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <!-- CATEGORY -->
+            <label>Category</label>
+
+            <select class="form-control mb-3" name="category" id="category">
+                <option value="transport">Transport</option>
+                <option value="food">Food</option>
+                <option value="venue">Venue</option>
+                <option value="materials">Materials</option>
+                <option value="other">Other</option>
+            </select>
+
+            <!-- OTHER CATEGORY -->
+            <div id="otherBox" style="display:none;">
+
+                <label>Specify Other Category</label>
+
+                <input type="text"
+                       name="other_category"
+                       id="other_category"
+                       class="form-control mb-3">
+
+            </div>
+
+            <!-- AMOUNT -->
+            <label>Amount</label>
+
+            <input type="number"
+                   step="0.01"
+                   name="amount"
+                   class="form-control mb-3"
+                   required>
+
+            <!-- DESCRIPTION -->
+            <label>Description</label>
+
+            <input type="text"
+                   name="description"
+                   class="form-control mb-3">
+
+            <button type="submit" class="btn btn-success w-100">
+                Save Expense
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("category").addEventListener("change", function(){
+
+    const otherBox = document.getElementById("otherBox");
+
+    if(this.value === "other"){
+        otherBox.style.display = "block";
+    } else {
+        otherBox.style.display = "none";
+    }
+
+});
+
+</script>
+
+{% endblock %}

@@ -14,11 +14,11 @@ def admin_required(view_func):
     return wrapper
 
 
-def leader_required(view_func):
+def coordinator_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
 
-        if request.user.is_authenticated and request.user.role == 'leader':
+        if request.user.is_authenticated and request.user.role == 'coordinator':
             return view_func(request, *args, **kwargs)
 
         return redirect('home')

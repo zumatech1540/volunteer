@@ -3,76 +3,98 @@ from accounts.models import County, Constituency, Ward, PollingStation
 
 
 class Command(BaseCommand):
-    help = "Seed Laikipia County location data (safe + idempotent)"
+    help = "Seed Laikipia County location data (clean + idempotent)"
 
     def handle(self, *args, **kwargs):
+
+        self.stdout.write("Seeding Laikipia locations...")
 
         # ================= COUNTY =================
         county, _ = County.objects.get_or_create(name="Laikipia")
 
-        # ================= CONSTITUENCIES =================
+        # =====================================================
+        # CONSTITUENCIES
+        # =====================================================
         east, _ = Constituency.objects.get_or_create(name="Laikipia East", county=county)
         north, _ = Constituency.objects.get_or_create(name="Laikipia North", county=county)
         west, _ = Constituency.objects.get_or_create(name="Laikipia West", county=county)
 
-        # =========================================================
+        # =====================================================
+        # LAIKIPIA EAST WARDS
+        # =====================================================
+        wards_east = [
+            "Ngobit Ward",
+            "Tigithi Ward",
+            "Thingithu Ward",
+            "Nanyuki Ward",
+            "Umande Ward",
+        ]
+
+        east_wards = {}
+        for w in wards_east:
+            obj, _ = Ward.objects.get_or_create(name=w, constituency=east)
+            east_wards[w] = obj
+
+        # =====================================================
+        # LAIKIPIA NORTH WARDS
+        # =====================================================
+        wards_north = [
+            "Mukogodo East Ward",
+            "Mukogodo West Ward",
+            "Segera Ward",
+            "Sosian Ward",
+        ]
+
+        north_wards = {}
+        for w in wards_north:
+            obj, _ = Ward.objects.get_or_create(name=w, constituency=north)
+            north_wards[w] = obj
+
+        # =====================================================
+        # LAIKIPIA WEST WARDS
+        # =====================================================
+        wards_west = [
+            "Ol-Moran Ward",
+            "Rumuruti Township Ward",
+            "Salama Ward",
+            "Marmanet Ward",
+            "Igwamiti Ward",
+            "Githiga Ward",
+        ]
+
+        west_wards = {}
+        for w in wards_west:
+            obj, _ = Ward.objects.get_or_create(name=w, constituency=west)
+            west_wards[w] = obj
+
+        # =====================================================
+        # POLLING STATIONS (CLEAN STRUCTURE)
+        # =====================================================
+
         # EAST
-        # =========================================================
-        nanyuki, _ = Ward.objects.get_or_create(name="Nanyuki", constituency=east)
-        tigithi, _ = Ward.objects.get_or_create(name="Tigithi", constituency=east)
-        thome, _ = Ward.objects.get_or_create(name="Thome", constituency=east)
-        sosian_east, _ = Ward.objects.get_or_create(name="Sosian East", constituency=east)
+        PollingStation.objects.get_or_create(name="Nanyuki Primary School", ward=east_wards["Nanyuki Ward"])
+        PollingStation.objects.get_or_create(name="Likii Market Center", ward=east_wards["Nanyuki Ward"])
+        PollingStation.objects.get_or_create(name="Nanyuki High School", ward=east_wards["Nanyuki Ward"])
 
-        # =========================================================
+        PollingStation.objects.get_or_create(name="Tigithi Market Center", ward=east_wards["Tigithi Ward"])
+        PollingStation.objects.get_or_create(name="Kiamariga Centre", ward=east_wards["Tigithi Ward"])
+
+        PollingStation.objects.get_or_create(name="Thome Community Hall", ward=east_wards["Thingithu Ward"])
+
         # NORTH
-        # =========================================================
-        doldol, _ = Ward.objects.get_or_create(name="Doldol", constituency=north)
-        mairungi, _ = Ward.objects.get_or_create(name="Mairungi", constituency=north)
-        mukogodo, _ = Ward.objects.get_or_create(name="Mukogodo", constituency=north)
-        ilgwesi, _ = Ward.objects.get_or_create(name="Ilgwesi", constituency=north)
+        PollingStation.objects.get_or_create(name="Doldol Town Hall", ward=north_wards["Mukogodo East Ward"])
+        PollingStation.objects.get_or_create(name="Mukogodo Forest Centre", ward=north_wards["Mukogodo West Ward"])
 
-        # =========================================================
+        PollingStation.objects.get_or_create(name="Olmoran Centre", ward=north_wards["Segera Ward"])
+        PollingStation.objects.get_or_create(name="Sosian Ranch Gate", ward=north_wards["Sosian Ward"])
+
         # WEST
-        # =========================================================
-        rumuruti, _ = Ward.objects.get_or_create(name="Rumuruti", constituency=west)
-        sipili, _ = Ward.objects.get_or_create(name="Sipili", constituency=west)
-        igwamiti, _ = Ward.objects.get_or_create(name="Igwamiti", constituency=west)
-        salama, _ = Ward.objects.get_or_create(name="Salama", constituency=west)
+        PollingStation.objects.get_or_create(name="Rumuruti Market", ward=west_wards["Rumuruti Township Ward"])
+        PollingStation.objects.get_or_create(name="Rumuruti Stadium", ward=west_wards["Rumuruti Township Ward"])
 
-        # =========================================================
-        # POLLING STATIONS (EAST)
-        # =========================================================
-        PollingStation.objects.get_or_create(name="Nanyuki Primary School", ward=nanyuki)
-        PollingStation.objects.get_or_create(name="Likii Market Center", ward=nanyuki)
-        PollingStation.objects.get_or_create(name="Nanyuki High School", ward=nanyuki)
+        PollingStation.objects.get_or_create(name="Sipili Market Center", ward=west_wards["Ol-Moran Ward"])
+        PollingStation.objects.get_or_create(name="Igwamiti Shopping Center", ward=west_wards["Igwamiti Ward"])
 
-        PollingStation.objects.get_or_create(name="Tigithi Market Center", ward=tigithi)
-        PollingStation.objects.get_or_create(name="Kiamariga Centre", ward=tigithi)
-
-        PollingStation.objects.get_or_create(name="Thome Community Hall", ward=thome)
-
-        PollingStation.objects.get_or_create(name="Sosian Ranch Gate", ward=sosian_east)
-
-        # =========================================================
-        # POLLING STATIONS (NORTH)
-        # =========================================================
-        PollingStation.objects.get_or_create(name="Doldol Town Hall", ward=doldol)
-        PollingStation.objects.get_or_create(name="Olmoran Centre", ward=doldol)
-
-        PollingStation.objects.get_or_create(name="Mairungi Primary School", ward=mairungi)
-        PollingStation.objects.get_or_create(name="Mukogodo Forest Centre", ward=mukogodo)
-
-        PollingStation.objects.get_or_create(name="Ilgwesi Trading Center", ward=ilgwesi)
-
-        # =========================================================
-        # POLLING STATIONS (WEST)
-        # =========================================================
-        PollingStation.objects.get_or_create(name="Rumuruti Market", ward=rumuruti)
-        PollingStation.objects.get_or_create(name="Rumuruti Stadium", ward=rumuruti)
-
-        PollingStation.objects.get_or_create(name="Sipili Market Center", ward=sipili)
-        PollingStation.objects.get_or_create(name="Igwamiti Shopping Center", ward=igwamiti)
-
-        PollingStation.objects.get_or_create(name="Salama Trading Center", ward=salama)
+        PollingStation.objects.get_or_create(name="Salama Trading Center", ward=west_wards["Salama Ward"])
 
         self.stdout.write(self.style.SUCCESS("✅ Laikipia location data seeded successfully!"))

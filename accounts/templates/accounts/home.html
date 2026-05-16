@@ -7,36 +7,36 @@
 <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <!-- ================= HERO SECTION ================= -->
-<div class="hero-premium d-flex align-items-center">
+<div class="hero-premium d-flex align-items-center position-relative"
+     style="background: url('{% static 'projects/heroo.jpg' %}') center/cover no-repeat; min-height:90vh;">
+    
 
+    <!-- BACKGROUND OVERLAY -->
     <div class="hero-overlay"></div>
 
     <div class="container text-center text-white position-relative">
 
-        <h1 class="hero-title" data-aos="fade-up">
-            Community Volunteers Platform
+        <h1 class="hero-title fw-bold display-4" data-aos="fade-up">
+            Transformational Leadership for Inclusive Development
         </h1>
 
-        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-            Connecting Communities, Volunteers & Leaders for Real Impact
-        </p>
+        <p class="hero-subtitle lead mt-3" data-aos="fade-up" data-aos-delay="200">
+            Economist | Former Governor | Public Policy Expert | Development Advocate
+       
 
-        <div data-aos="fade-up" data-aos-delay="400">
+        <!-- ACTION BUTTONS -->
+        <div class="mt-4" data-aos="fade-up" data-aos-delay="400">
 
             {% if not request.user.is_authenticated %}
 
                 <a href="{% url 'register' %}"
                    class="btn btn-light btn-lg px-4 me-2 rounded-pill">
-
-                    Join Now
-
+                    Join Platform
                 </a>
 
                 <a href="{% url 'login' %}"
-                   class="btn btn-light btn-lg px-4 me-2 rounded-pill">
-
-                  login
-
+                   class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                    Sign In
                 </a>
 
             {% else %}
@@ -45,27 +45,21 @@
 
                     <a href="{% url 'admin_dashboard' %}"
                        class="btn btn-warning btn-lg px-4 rounded-pill">
-
-                        Go to Dashboard
-
+                        Admin Dashboard
                     </a>
 
                 {% elif request.user.role == "leader" %}
 
                     <a href="{% url 'leader_dashboard' %}"
                        class="btn btn-warning btn-lg px-4 rounded-pill">
-
-                        Go to Dashboard
-
+                        Leader Dashboard
                     </a>
 
                 {% else %}
 
                     <a href="{% url 'volunteer_dashboard' %}"
                        class="btn btn-warning btn-lg px-4 rounded-pill">
-
-                        Go to Dashboard
-
+                        Citizen Dashboard
                     </a>
 
                 {% endif %}
@@ -83,35 +77,87 @@
 
     <div class="row align-items-center g-5">
 
+        <!-- ================= IMAGE SLIDER ================= -->
         <div class="col-md-6" data-aos="fade-right">
 
-            <img src="{% static 'projects/about.jpg' %}"
-                 class="img-fluid rounded-4 shadow-lg">
+            <div id="aboutCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="6000">
+
+                <div class="carousel-inner rounded-4 shadow-lg overflow-hidden">
+
+                    <div class="carousel-item active">
+                        <img src="{% static 'projects/aboutt.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item active">
+                        <img src="{% static 'projects/slide.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item active">
+                        <img src="{% static 'projects/slide1.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+
+                     <div class="carousel-item">
+                        <img src="{% static 'projects/slide2.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item active">
+                        <img src="{% static 'projects/slide3.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item active">
+                        <img src="{% static 'projects/slide4.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'projects/slide5.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="{% static 'projects/slide6.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'projects/slide7.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'projects/slide8.jpg' %}"
+                             class="d-block w-100 about-img">
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
+        <!-- ================= TEXT ================= -->
         <div class="col-md-6" data-aos="fade-left">
 
             <h2 class="fw-bold mb-3">
-                About Community Volunteer
+                Profile Overview
             </h2>
 
+            <p class="text-muted">
+                Leadership, governance, and development impact across Kenya and beyond
+            </p>
+
             <p class="lead text-muted">
-                Volunteer connects volunteers, leaders and communities
-                to work together on impactful projects including
-                education, environment and development.
+                Ndiritu Muriithi is a seasoned economist, financial markets expert,
+                and public policy leader with over 35 years of experience spanning
+                international finance, industrial development, governance, and public service.
             </p>
 
             <p>
-                We believe in transparency, teamwork and real measurable
-                community impact.
+                His leadership is defined by innovation in financing models, SME development,
+                infrastructure bonds, and rural transformation programs.
             </p>
 
-            <a href="#"
+            <a href="{% url 'about' %}"
                class="btn btn-primary rounded-pill px-4 mt-3">
-
                 Learn More
-
             </a>
 
         </div>
@@ -120,22 +166,28 @@
 
 </div>
 
+    </div>
+
+</div>
+
 <!-- ================= PROJECTS SECTION ================= -->
-<!-- PROJECTS -->
+<!-- ================= KEY ACHIEVEMENTS ================= -->
 <div class="container my-5">
 
-    <h2 class="text-center fw-bold mb-5">Our Community Projects</h2>
+    <h2 class="text-center fw-bold mb-5">
+        Key Achievements in Leadership
+    </h2>
 
     <div class="row g-4">
 
         <!-- 1 -->
         <div class="col-md-4" data-aos="zoom-in">
             <div class="premium-card">
-                <img src="{% static 'projects/tree.jpg' %}">
+                <img src="{% static 'projects/infrastructure.jpg' %}">
                 <div class="p-3">
                     <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🌳 Tree Planting Initiative</h5>
-                    <p>Environmental restoration through tree planting campaigns.</p>
+                    <h5>🏗 Infrastructure Development</h5>
+                    <p>Expansion of rural roads and introduction of innovative financing models including infrastructure bonds.</p>
                 </div>
             </div>
         </div>
@@ -143,11 +195,11 @@
         <!-- 2 -->
         <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
             <div class="premium-card">
-                <img src="{% static 'projects/cleanup.jpg' %}">
+                <img src="{% static 'projects/water.jpg' %}">
                 <div class="p-3">
                     <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🧹 Community Clean-up</h5>
-                    <p>Improving hygiene and environmental safety.</p>
+                    <h5>💧 Water Access Expansion</h5>
+                    <p>Implementation of major water projects including Solio and Makurian schemes improving rural water supply.</p>
                 </div>
             </div>
         </div>
@@ -158,8 +210,8 @@
                 <img src="{% static 'projects/education.jpg' %}">
                 <div class="p-3">
                     <span class="badge bg-success mb-2">Completed</span>
-                    <h5>📚 Educational Support</h5>
-                    <p>Providing learning materials and mentorship.</p>
+                    <h5>🎓 Education Development</h5>
+                    <p>Establishment of secondary schools, youth polytechnics, and expansion of higher education access.</p>
                 </div>
             </div>
         </div>
@@ -167,11 +219,11 @@
         <!-- 4 -->
         <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
             <div class="premium-card">
-                <img src="{% static 'projects/water.jpg' %}">
+                <img src="{% static 'projects/economy.jpg' %}">
                 <div class="p-3">
-                    <span class="badge bg-warning mb-2">Ongoing</span>
-                    <h5>💧 Clean Water Access</h5>
-                    <p>Supplying safe drinking water solutions.</p>
+                    <span class="badge bg-success mb-2">Completed</span>
+                    <h5>💰 SME & Economic Growth</h5>
+                    <p>Promotion of SME financing programs, interest subsidies, and business development initiatives.</p>
                 </div>
             </div>
         </div>
@@ -179,11 +231,11 @@
         <!-- 5 -->
         <div class="col-md-4" data-aos="zoom-in" data-aos-delay="400">
             <div class="premium-card">
-                <img src="{% static 'projects/community.jpg' %}">
+                <img src="{% static 'projects/health.jpg' %}">
                 <div class="p-3">
-                    <span class="badge bg-warning mb-2">Ongoing</span>
-                    <h5>🏢 Community Center Construction</h5>
-                    <p>Building modern community development facilities.</p>
+                    <span class="badge bg-success mb-2">Completed</span>
+                    <h5>🏥 Healthcare Improvement</h5>
+                    <p>Strengthening of healthcare systems and expansion of access to quality medical services.</p>
                 </div>
             </div>
         </div>
@@ -191,11 +243,11 @@
         <!-- 6 -->
         <div class="col-md-4" data-aos="zoom-in" data-aos-delay="500">
             <div class="premium-card">
-                <img src="{% static 'projects/solar.jpg' %}">
+                <img src="{% static 'projects/governance.jpg' %}">
                 <div class="p-3">
                     <span class="badge bg-success mb-2">Completed</span>
-                    <h5>☀ Solar Energy Project</h5>
-                    <p>Promoting clean renewable energy in communities.</p>
+                    <h5>🏛 Governance & Reform</h5>
+                    <p>Public sector reforms, credit information systems, and financial market development initiatives.</p>
                 </div>
             </div>
         </div>
@@ -205,63 +257,62 @@
 </div>
 
 
-
-<!-- IMPACT SECTION -->
+<!-- ================= IMPACT SECTION ================= -->
 <div class="impact-premium">
 
     <div class="container">
 
         <div class="text-center text-white mb-5">
-            <h2 class="fw-bold">Our Impact in Communities</h2>
+            <h2 class="fw-bold">Development Impact & Delivery</h2>
             <p>
-                Real numbers showing the difference volunteers and leaders are making
-                across Laikipia and surrounding regions.
+                Key measurable outcomes from leadership, governance reforms,
+                and development programs across Laikipia and beyond.
             </p>
         </div>
 
         <div class="row g-4 text-center">
 
-            <!-- Communities -->
+            <!-- Wards / Communities -->
             <div class="col-md-4" data-aos="fade-up">
                 <div class="impact-card">
 
                     <div class="impact-icon">
-                        🌍
+                        🏘️
                     </div>
 
-                    <h1 class="counter" data-target="25">0</h1>
+                    <h1 class="counter" data-target="32">0</h1>
 
-                    <h5>Communities Reached</h5>
+                    <h5>Administrative Areas Reached</h5>
 
                     <p>
-                        We have successfully launched volunteer programs in multiple
-                        towns and rural areas improving lives.
+                        Development programs implemented across wards and rural settlements
+                        improving service delivery and inclusion.
                     </p>
 
                 </div>
             </div>
 
-            <!-- Volunteers -->
+            <!-- Infrastructure -->
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
                 <div class="impact-card">
 
                     <div class="impact-icon">
-                        👥
+                        🏗️
                     </div>
 
-                    <h1 class="counter" data-target="500">0</h1>
+                    <h1 class="counter" data-target="150">0</h1>
 
-                    <h5>Active Volunteers</h5>
+                    <h5>Infrastructure Projects</h5>
 
                     <p>
-                        Dedicated individuals working together to create sustainable
-                        and measurable community impact.
+                        Roads, water systems, schools, and public facilities developed
+                        through innovative financing and planning models.
                     </p>
 
                 </div>
             </div>
 
-            <!-- Projects -->
+            <!-- Development Programs -->
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="impact-card">
 
@@ -269,13 +320,13 @@
                         📊
                     </div>
 
-                    <h1 class="counter" data-target="10">0</h1>
+                    <h1 class="counter" data-target="45">0</h1>
 
-                    <h5>Projects Completed</h5>
+                    <h5>Development Programs</h5>
 
                     <p>
-                        From clean water to education support, our initiatives
-                        continue transforming communities.
+                        Ongoing and completed initiatives in water, SMEs,
+                        healthcare, education, and economic empowerment.
                     </p>
 
                 </div>
@@ -288,94 +339,62 @@
 </div>
 
 
-<!-- ================= RECENT EVENTS ================= -->
+<!-- ================= CTA SECTION ================= -->
 <div class="container my-5">
 
-    <div class="text-center mb-5">
-
-        <h2 class="fw-bold">
-            Recent Events
-        </h2>
-
-        <p class="text-muted">
-            Activities happening across the community.
-        </p>
-
-    </div>
-
-    <div class="row g-4">
-
-        {% for event in recent_events %}
-
-        <div class="col-md-4" data-aos="fade-up">
-
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-
-                <div class="card-body">
-
-                    <h5 class="fw-bold">
-                        {{ event.title }}
-                    </h5>
-
-                    <p class="text-muted mb-1">
-                        📍 {{ event.location }}
-                    </p>
-
-                    <p class="text-muted">
-                        📅 {{ event.date }}
-                    </p>
-
-                    <p>
-                        {{ event.description|truncatechars:100 }}
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div class="col-12 text-center">
-
-            <p>register to get updates.</p>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-</div>
-
-<!-- ================= CTA ================= -->
-<div class="container my-5">
-
-    <div class="cta-premium text-center"
+    <div class="cta-premium text-center p-5 rounded-4 shadow-lg"
+         style="background: linear-gradient(135deg, #e6dce2, #6610f2); color: white;"
          data-aos="zoom-in">
 
-        <h2 class="fw-bold">
-            Join Our WhatsApp Community
+        <h2 class="fw-bold mb-3">
+            Engage With the Movement
         </h2>
 
-        <p>
-            Get real-time updates on volunteer opportunities
-            in Laikipia and surrounding regions.
+        <p class="mb-4" style="font-size: 1.1rem; opacity: 0.9;">
+           Report issues, share feedback, and connect with leadership in real time.
         </p>
 
-        <a href="https://chat.whatsapp.com/YOUR_REAL_GROUP_LINK"
+        <a href="{% url 'register' %}"
            target="_blank"
-           class="btn btn-success btn-lg mt-3 rounded-pill px-5">
+           class="btn btn-success btn-lg rounded-pill px-5 mb-4 shadow">
 
-            Join WhatsApp Group
+            📲 Join WhatsApp Group
 
         </a>
 
+        <!-- Divider -->
+        <hr class="my-4" style="opacity: 0.3;">
+
+        <!-- Ground Voice Card -->
+        <div class="row justify-content-center">
+
+            <div class="col-md-8">
+
+                <a href="{% url 'submit_ground_voice' %}" class="text-decoration-none">
+
+                    <div class="card border-0 shadow-lg rounded-4 p-4"
+                         style="background: rgba(10, 212, 90, 0.15); backdrop-filter: blur(10px); color: white;">
+
+                        <h3 class="fw-bold mb-2">
+                            📢 Ground Voice
+                        </h3>
+
+                        <p class="mb-0" style="opacity: 0.9;">
+                            Send grievances, report issues, and raise concerns directly from the community.
+                        </p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
+<!-- ================= FLOATING GROUND VOICE BUTTON ================= -->
 
 </div>
-
 
 
 <!-- ================= CSS ================= -->

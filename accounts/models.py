@@ -1,6 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.db.models import Sum
+
+@property
+def category_summary(self):
+    return self.expenses.values('category').annotate(
+        total=Sum('amount')
+    )
+
 
 image = models.ImageField(upload_to='projects/', blank=True, null=True)
 # =====================================================
@@ -61,7 +69,12 @@ class PollingStation(models.Model):
     def __str__(self):
         return self.name
 
+class CoordinatorProfile(models.Model):
+    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE)
+    constituency = models.ForeignKey('accounts.Constituency', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.user.username} - Coordinator"
 # =====================================================
 # CUSTOM USER MODEL
 # =====================================================
@@ -70,7 +83,7 @@ class User(AbstractUser):
 
     ROLE_CHOICES = (
         ('admin', 'Admin'),
-        ('leader', 'Leader'),
+        ('coordinator', 'Coordinator'),
         ('volunteer', 'Volunteer'),
     )
 
@@ -107,6 +120,15 @@ class User(AbstractUser):
         blank=True
     )
 
+    managed_constituency = models.ForeignKey(
+        'accounts.Constituency',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='coordinators',
+        help_text='Only for coordinators'
+    )
+
     polling_station = models.ForeignKey(
         'accounts.PollingStation',
         on_delete=models.SET_NULL,
@@ -116,7 +138,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
 
 # =====================================================
 # EVENTS
@@ -462,24 +483,110 @@ class EventBudget(models.Model):
     event = models.OneToOneField(
         Event,
         on_delete=models.CASCADE,
-        related_name="budget_info"
+        related_name="budget"
     )
 
-    estimated_budget = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0
-    )
-
-    actual_spent = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0
-    )
-
-    notes = models.TextField(blank=True, null=True)
+    total_budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.event.title} Budget"
+
+    @property
+    def total_expenses(self):
+        return self.expenses.aggregate(
+            total=models.Sum('amount')
+        )['total'] or 0
+
+    @property
+    def actual_spent(self):
+        return self.total_expenses
+
+    @property
+    def variance(self):
+        return self.total_budget - self.actual_spent
+
+    @property
+    def category_summary(self):
+        return self.expenses.values('category').annotate(
+            total=Sum('amount')
+        )
+
+
+        
+class ExpenseLog(models.Model):
+
+    CATEGORY_CHOICES = (
+        ('transport', 'Transport'),
+        ('food', 'Food'),
+        ('venue', 'Venue'),
+        ('materials', 'Materials'),
+        ('other', 'Other'),
+    )
+
+    budget = models.ForeignKey(
+        EventBudget,
+        on_delete=models.CASCADE,
+        related_name="expenses"
+    )
+
+    
+    category = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+
+    description = models.CharField(max_length=255)
+
+    receipt = models.ImageField(upload_to="receipts/", blank=True, null=True)
+
+    approved = models.BooleanField(default=False)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # force budget refresh (safe + simple)
+        if self.budget_id:
+            self.budget.refresh_from_db()
+
+    def __str__(self):
+        return f"{self.category} - {self.amount}"
+
+class GroundVoice(models.Model):
+
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('resolved', 'Resolved'),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    name = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject

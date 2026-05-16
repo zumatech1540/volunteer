@@ -1,7 +1,8 @@
 from django import forms
 from .models import Task, Event, Voter
-
+from .models import EventBudget
 from .models import User
+
 
 # ================= TASK FORM =================
 class TaskForm(forms.ModelForm):
@@ -66,3 +67,15 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match")
 
         return cleaned
+
+
+
+
+
+class EventBudgetForm(forms.ModelForm):
+    class Meta:
+        model = EventBudget
+        fields = [
+            'event',
+            'total_budget'
+        ]

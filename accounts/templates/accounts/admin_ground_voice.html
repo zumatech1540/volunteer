@@ -1,0 +1,94 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Ground Grievances</h2>
+    </div>
+
+    <div class="card shadow border-0 rounded-4">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>User</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for g in grievances %}
+                        <tr>
+
+                            <td>
+                                {% if g.name %}{{ g.name }}{% else %}Anonymous{% endif %}
+                            </td>
+
+                            <td>
+                                {% if g.phone %}{{ g.phone }}{% else %}-{% endif %}
+                            </td>
+
+                            <td>
+                                {% if g.user %}{{ g.user }}{% else %}Guest{% endif %}
+                            </td>
+
+                            <td>{{ g.subject }}</td>
+
+                            <td style="max-width:300px;">
+                                {{ g.message }}
+                            </td>
+
+                            <td>
+                                {% if g.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-success">Resolved</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ g.created_at }}</td>
+
+                            <td>
+
+                                {% if g.status == 'pending' %}
+                                    <a href="{% url 'resolve_ground_voice' g.id %}"
+                                       class="btn btn-sm btn-success"
+                                       onclick="return confirm('Mark this grievance as resolved?')">
+                                        Mark Resolved
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">Done</span>
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

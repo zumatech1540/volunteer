@@ -72,12 +72,12 @@
                                 ✔ Joined
                             </button>
                         {% else %}
-                            <form method="POST" action="{% url 'join_event' e.id %}">
-                                {% csrf_token %}
-                                <button class="btn btn-primary btn-sm w-100 mb-2">
-                                    Join Event
-                                </button>
-                            </form>
+                            <button 
+    id="join-btn-{{ e.id }}"
+    class="btn btn-primary btn-sm w-100 mb-2"
+    onclick="joinEvent({{ e.id }})">
+    Join Event
+</button>
                         {% endif %}
 
                         <!-- ATTENDANCE -->
@@ -130,5 +130,51 @@
     </div>
 
 </div>
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
+function joinEvent(eventId) {
+
+    fetch(`/join-event/${eventId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie('csrftoken'),
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        alert(data.message);
+
+        if (data.success) {
+
+            // change button instantly
+            let btn = document.getElementById(`join-btn-${eventId}`);
+            btn.innerText = "✔ Joined";
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-success");
+            btn.disabled = true;
+        }
+
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Request failed");
+    });
+
+}
+</script>
 {% endblock %}

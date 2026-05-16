@@ -1,0 +1,46 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card p-4 shadow-lg">
+
+        <h3>Assign Coordinator</h3>
+
+        <p>
+            Assign <b>{{ user.first_name }}</b> to a constituency
+        </p>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label>Select Constituency</label>
+
+                <select name="constituency" class="form-control" required>
+
+                    <option value="">-- Select --</option>
+
+                    {% for c in constituencies %}
+                        <option value="{{ c.id }}">
+                            {{ c.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <button class="btn btn-primary">
+                Confirm Coordinator
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

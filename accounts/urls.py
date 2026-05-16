@@ -35,7 +35,7 @@ urlpatterns = [
     # EVENTS
     path('create-event/', views.create_event, name='create_event'),
     path('leader-create-event/', views.leader_create_event, name='leader_create_event'),
-
+    path('delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
     # TASKS
     path('assign-task/', views.assign_task, name='assign_task'),
     
@@ -53,7 +53,7 @@ urlpatterns = [
 
     path('user-tasks/<int:user_id>/', views.my_tasks, name='user_tasks_admin'),
     path('make-admin/<int:user_id>/', views.make_admin, name='make_admin'),
-    path('make-leader/<int:user_id>/', views.make_leader, name='make_leader'),
+    
     path('make-volunteer/<int:user_id>/', views.make_volunteer, name='make_volunteer'),
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
     path(
@@ -61,4 +61,25 @@ urlpatterns = [
     views.voter_analytics_dashboard,
     name='leader_charts'
 ),
+    path(
+    'make-coordinator/<int:user_id>/',
+    views.make_coordinator,
+    name='make_coordinator'
+),
+
+    path(
+    "create-event-budget/",
+    views.create_event_budget,
+    name="create_event_budget"
+),
+     path("event-budgets/", views.event_budget_dashboard, name="event_budget_dashboard"),
+
+    path("create-event-budget/", views.create_event_budget, name="create_event_budget"),
+    path('join-event/<int:event_id>/', views.join_event, name='join_event'),
+    path("add-expense/<int:budget_id>/", views.add_expense, name="add_expense"),
+    path('add-expense/<int:budget_id>/', views.add_expense, name='add_expense'),
+    path("event-budgets/", views.event_budget_dashboard, name="event_budget_dashboard"),
+    path('ground-voice/', views.submit_ground_voice, name='submit_ground_voice'),
+    path('admin-ground-voice/', views.admin_ground_voice, name='admin_ground_voice'),
+    path('resolve-ground-voice/<int:pk>/', views.resolve_ground_voice, name='resolve_ground_voice'),
 ]

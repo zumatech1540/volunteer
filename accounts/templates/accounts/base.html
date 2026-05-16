@@ -21,6 +21,18 @@
 
     <style>
 
+
+  
+
+
+        .hero-overlay{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+   
+}
         *{
             margin:0;
             padding:0;
@@ -139,6 +151,55 @@
             border:none;
             border-radius:14px;
         }
+
+
+
+        .ground-voice-float {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: white;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-decoration: none;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.ground-voice-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+        .whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 999;
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    background: #1ebe5d;
+    transform: scale(1.05);
+    transition: 0.2s;
+}
 
         /* =====================================
                 FOOTER
@@ -584,6 +645,10 @@
         once: true
     });
 </script>
+<a href="{% url 'submit_ground_voice' %}" class="ground-voice-float">
 
+    📢 
+
+</a>
 </body>
 </html>

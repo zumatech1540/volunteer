@@ -8,6 +8,23 @@ from django.db.models import Count, Q
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+import json
+from django.http import JsonResponse
+from .models import ExpenseLog, EventBudget, EventParticipant
+import json
+import json
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+import json
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -24,6 +41,7 @@ from django.db.models import Count, Sum
 from .models import Event, Task, User, EventParticipant, EventBudget
 import pandas as pd
 from django.http import HttpResponse
+from django.db.models import Sum
 from .models import User
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -38,6 +56,7 @@ from .models import User
 from .models import Voter
 from .utils import send_sms
 from .utils import send_whatsapp_message
+from .models import GroundVoice
 
 from django.shortcuts import render
 from .models import Project, Event
@@ -45,6 +64,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Voter, Ward, SMSLog
 from .utils import send_sms
+from .forms import EventBudgetForm
 
 
 
@@ -73,7 +93,7 @@ from .forms import (
 # ================= DECORATORS =================
 from .decorators import (
     admin_required,
-    leader_required,
+    coordinator_required,
     volunteer_required
 )
 
@@ -207,7 +227,7 @@ def login_view(request):
             if user.is_superuser or user.role == "admin":
                 return redirect("admin_dashboard")
 
-            elif user.role == "leader":
+            elif user.role == "coordinator":
                 return redirect("leader_dashboard")
 
             else:
@@ -267,7 +287,6 @@ def admin_dashboard(request):
     # ================= EVENTS =================
     total_events = events.count()
     pending_events = events.filter(approval_status='pending').count()
-
     total_attendance = EventParticipant.objects.count()
 
     # ================= TASKS =================
@@ -276,43 +295,39 @@ def admin_dashboard(request):
     in_progress_tasks = tasks.filter(status='in_progress').count()
     pending_tasks = tasks.filter(status='pending').count()
 
-    # ================= FINANCE =================
-    total_estimated_budget = budgets.aggregate(
-        total=Sum('estimated_budget')
+    # ================= FINANCE (FIXED) =================
+
+    total_budget = budgets.aggregate(
+        total=Sum('total_budget')
     )['total'] or 0
 
-    total_spent = budgets.aggregate(
-        total=Sum('actual_spent')
-    )['total'] or 0
+    total_spent = sum(b.actual_spent for b in budgets)
 
-    remaining_budget = total_estimated_budget - total_spent
+    total_variance = total_budget - total_spent
 
     # ================= CONTEXT =================
     context = {
-        # USERS
         'users': users,
         'members': users,
         'total_members': total_members,
         'total_voters': total_voters,
 
-        # EVENTS
         'events': events,
         'total_events': total_events,
         'pending_events': pending_events,
         'total_attendance': total_attendance,
 
-        # TASKS
         'tasks': tasks,
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'in_progress_tasks': in_progress_tasks,
         'pending_tasks': pending_tasks,
 
-        # FINANCE (NEW)
+        # FINANCE FIXED
         'budgets': budgets,
-        'total_estimated_budget': total_estimated_budget,
+        'total_budget': total_budget,
         'total_spent': total_spent,
-        'remaining_budget': remaining_budget,
+        'total_variance': total_variance,
     }
 
     return render(request, 'accounts/admin_dashboard.html', context)
@@ -322,7 +337,7 @@ def admin_dashboard(request):
 
 
 @login_required
-@leader_required
+@coordinator_required
 def leader_dashboard(request):
 
     # ================= EVENTS =================
@@ -342,7 +357,7 @@ def leader_dashboard(request):
 
     # ================= MEMBERS =================
     members = User.objects.filter(
-        role__in=['volunteer', 'leader']
+        role__in=['volunteer', 'Coordinator']
     )[:10]
 
     total_members = User.objects.count()
@@ -513,7 +528,7 @@ def volunteer_dashboard(request):
 def create_event(request):
 
     # only admin and leader can create events
-    if request.user.role not in ['admin', 'leader']:
+    if request.user.role not in ['admin', 'coordinator']:
         return redirect('home')
 
     form = EventForm()
@@ -526,7 +541,7 @@ def create_event(request):
             event.created_by = request.user
 
             # leaders create but still pending approval
-            if request.user.role == 'leader':
+            if request.user.role == 'coordinator':
                 event.approval_status = 'pending'
 
             # admins can auto-approve if you want (optional)
@@ -543,7 +558,7 @@ def create_event(request):
 
 
 @login_required
-@leader_required
+@coordinator_required
 def leader_create_event(request):
 
     if request.method == "POST":
@@ -622,12 +637,13 @@ def delete_event(request, event_id):
 
 
 
+from django.http import JsonResponse
+
 @login_required
-def join_event(request, id):
+def join_event(request, event_id):
 
-    event = get_object_or_404(Event, id=id)
+    event = get_object_or_404(Event, id=event_id)
 
-    # 🚫 prevent duplicate join
     already_joined = EventParticipant.objects.filter(
         event=event,
         user=request.user
@@ -638,8 +654,15 @@ def join_event(request, id):
             event=event,
             user=request.user
         )
+        return JsonResponse({
+            "success": True,
+            "message": "You have successfully joined the event."
+        })
 
-    return redirect('volunteer_dashboard')
+    return JsonResponse({
+        "success": False,
+        "message": "You already joined this event."
+    })
 
 
 @login_required
@@ -703,28 +726,50 @@ def make_admin(request, user_id):
 
 
 @login_required
-def make_leader(request, user_id):
+@admin_required
+def make_coordinator(request, user_id):
 
     user = get_object_or_404(User, id=user_id)
 
-    user.role = "leader"
-    user.is_staff = False
-    user.is_superuser = False
+    constituencies = Constituency.objects.all()
 
-    user.save()
+    if request.method == "POST":
 
-    return redirect("manage_users")
+        constituency_id = request.POST.get("constituency")
+
+        if not constituency_id:
+            messages.error(request, "Please select constituency")
+            return redirect("make_coordinator", user_id=user.id)
+
+        user.role = "coordinator"
+        user.managed_constituency_id = constituency_id
+        user.save()
+
+        messages.success(request, "Coordinator assigned successfully")
+        return redirect("manage_users")
+
+    return render(request, "accounts/assign_coordinator.html", {
+        "user": user,
+        "constituencies": constituencies
+    })
+
 
 @login_required
+@admin_required
 def make_volunteer(request, user_id):
 
     user = get_object_or_404(User, id=user_id)
 
     user.role = "volunteer"
+
+    user.managed_constituency = None
+
     user.is_staff = False
     user.is_superuser = False
 
     user.save()
+
+    messages.success(request, "User changed to volunteer")
 
     return redirect("manage_users")
 
@@ -923,11 +968,11 @@ def voter_dashboard(request):
     user = request.user
 
     # ================= ACCESS CONTROL =================
-    if user.role not in ['admin', 'leader']:
+    if user.role not in ['admin', 'coordinator']:
         return redirect('home')
 
     # ================= DATA FILTERING =================
-    if user.role == "leader":
+    if user.role == "coordinator":
         voters = Voter.objects.filter(created_by=user)
     else:
         voters = Voter.objects.all()
@@ -957,10 +1002,10 @@ def voter_list(request):
 
     user = request.user
 
-    if user.role not in ['admin', 'leader']:
+    if user.role not in ['admin', 'coordinator']:
         return redirect('home')
 
-    if user.role == "leader":
+    if user.role == "coordinator":
         voters = Voter.objects.filter(created_by=user)
     else:
         voters = Voter.objects.all()
@@ -975,7 +1020,7 @@ def voter_list(request):
 @login_required
 def bulk_sms(request):
 
-    if request.user.role not in ['admin', 'leader'] and not request.user.is_superuser:
+    if request.user.role not in ['admin', 'coordinator'] and not request.user.is_superuser:
         messages.error(request, "Access denied")
         return redirect("home")
 
@@ -1100,7 +1145,7 @@ def bulk_whatsapp(request):
 
 
 @login_required
-@leader_required
+@coordinator_required
 def voter_analytics_dashboard(request):
 
     # ================= GLOBAL STATS =================
@@ -1174,3 +1219,236 @@ def download_users_excel(request):
     df.to_excel(response, index=False)
 
     return response
+
+
+def submit_ground_voice(request):
+
+    if request.method == 'POST':
+
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+
+        GroundVoice.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            name=name,
+            phone=phone,
+            subject=subject,
+            message=message
+        )
+
+        messages.success(request, 'Grievance submitted successfully.')
+
+        return redirect('submit_ground_voice')
+
+    return render(request, 'accounts/ground_voice.html')
+
+@login_required
+def admin_ground_voice(request):
+
+    grievances = GroundVoice.objects.all().order_by('-created_at')
+
+    return render(request, 'accounts/admin_ground_voice.html', {
+        'grievances': grievances
+    })
+
+def resolve_ground_voice(request, pk):
+
+    grievance = get_object_or_404(GroundVoice, id=pk)
+
+    grievance.status = 'resolved'
+    grievance.save()
+
+    return redirect('admin_ground_voice')
+    
+
+
+
+@login_required
+@admin_required
+def event_budget_dashboard(request):
+
+    budgets = EventBudget.objects.select_related('event')
+
+    total_budget = sum(b.total_budget for b in budgets)
+    total_spent = sum(b.actual_spent for b in budgets)
+    total_variance = total_budget - total_spent
+
+    form = EventBudgetForm()
+
+    if request.method == "POST":
+        form = EventBudgetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("event_budget_dashboard")
+
+    return render(request, "accounts/event_budget_dashboard.html", {
+        "budgets": budgets,
+        "form": form,
+        "total_budget": total_budget,
+        "total_spent": total_spent,
+        "total_variance": total_variance
+    })
+
+
+ALLOWED_FIELDS = ["total_budget"]
+
+@login_required
+@admin_required
+def update_budget_inline(request, pk):
+
+    budget = get_object_or_404(EventBudget, id=pk)
+
+    if request.method == "POST":
+
+        field = request.POST.get("field")
+        value = request.POST.get("value")
+
+        if field in ALLOWED_FIELDS:
+            setattr(budget, field, value)
+            budget.save()
+
+            return JsonResponse({
+                "success": True,
+                "field": field,
+                "value": value,
+                "variance": float(budget.variance),
+                "total_spent": float(budget.actual_spent)
+            })
+
+    return JsonResponse({"success": False})
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+@csrf_exempt
+
+
+
+@login_required
+def add_expense(request, budget_id):
+
+    budget = get_object_or_404(EventBudget, id=budget_id)
+
+    if request.method == "POST":
+
+        category = request.POST.get("category")
+
+        # if OTHER selected
+        if category == "other":
+            category = request.POST.get("other_category")
+
+        ExpenseLog.objects.create(
+            budget=budget,
+            category=category,
+            amount=request.POST.get("amount"),
+            description=request.POST.get("description"),
+            created_by=request.user
+        )
+
+        return redirect("event_budget_dashboard")
+
+    return render(request, "accounts/add_expense.html", {
+        "budget": budget
+    })
+
+@login_required
+@admin_required
+def approve_expense(request, expense_id):
+
+    expense = get_object_or_404(ExpenseLog, id=expense_id)
+
+    expense.approved = True
+    expense.save()
+
+    return redirect("event_budget_dashboard")
+
+
+
+
+
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+
+@login_required
+def export_event_budget_pdf(request, budget_id):
+
+    budget = get_object_or_404(EventBudget, id=budget_id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{budget.event.title}_report.pdf"'
+
+    p = canvas.Canvas(response)
+
+    p.drawString(100, 800, f"EVENT: {budget.event.title}")
+    p.drawString(100, 780, f"TOTAL BUDGET: {budget.total_budget}")
+    p.drawString(100, 760, f"TOTAL SPENT: {budget.actual_spent}")
+    p.drawString(100, 740, f"VARIANCE: {budget.variance}")
+
+    y = 700
+
+    for e in budget.expenses.all():
+        p.drawString(100, y, f"{e.category} - {e.amount} - {e.description}")
+        y -= 20
+
+    p.showPage()
+    p.save()
+
+    return response
+
+@login_required
+@admin_required
+def create_event_budget(request):
+
+    # GET ALL EVENTS
+    events = Event.objects.all()
+
+    if request.method == "POST":
+
+        event_id = request.POST.get("event")
+        total_budget = request.POST.get("total_budget")
+
+        print("EVENT ID:", event_id)
+        print("TOTAL BUDGET:", total_budget)
+
+        # CHECK EMPTY
+        if not event_id:
+            return render(request,
+                "accounts/create_event_budget.html",
+                {
+                    "events": events,
+                    "error": "Please select event"
+                }
+            )
+
+        # GET EVENT
+        event = get_object_or_404(Event, id=event_id)
+
+        # PREVENT DUPLICATE
+        if EventBudget.objects.filter(event=event).exists():
+
+            return render(request,
+                "accounts/create_event_budget.html",
+                {
+                    "events": events,
+                    "error": "Budget already exists"
+                }
+            )
+
+        # CREATE BUDGET
+        EventBudget.objects.create(
+            event=event,
+            total_budget=total_budget
+        )
+
+        return redirect("event_budget_dashboard")
+
+    return render(request,
+        "accounts/create_event_budget.html",
+        {
+            "events": events
+        }
+    )
