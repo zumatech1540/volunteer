@@ -3,110 +3,438 @@
 
 {% block content %}
 
+<style>
+
+/* ================= PAGE ================= */
+
+.events-header{
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+    border-radius: 25px;
+    padding: 50px 40px;
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.events-header::before{
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    top: -150px;
+    right: -100px;
+}
+
+.events-header h2{
+    font-size: 42px;
+    font-weight: 800;
+}
+
+.events-header p{
+    color: rgba(255,255,255,0.85);
+    font-size: 17px;
+    max-width: 700px;
+}
+
+/* ================= EVENT CARD ================= */
+
+.event-card{
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    height: 100%;
+    border: none;
+}
+
+.event-card:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+
+.event-image{
+    position: relative;
+    overflow: hidden;
+    height: 240px;
+}
+
+.event-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.event-card:hover .event-image img{
+    transform: scale(1.08);
+}
+
+/* STATUS BADGE */
+
+.status-badge{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    z-index: 5;
+}
+
+.live{
+    background: linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+.upcoming{
+    background: linear-gradient(135deg,#d97706,#f59e0b);
+}
+
+.ended{
+    background: linear-gradient(135deg,#475569,#64748b);
+}
+
+/* BODY */
+
+.event-body{
+    padding: 25px;
+}
+
+.event-title{
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #0f172a;
+}
+
+.event-meta{
+    color: #64748b;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.event-desc{
+    color: #475569;
+    line-height: 1.7;
+    margin-top: 15px;
+    min-height: 90px;
+}
+
+/* BUTTONS */
+
+.event-btn{
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 600;
+    border: none;
+    transition: 0.3s;
+}
+
+.join-btn{
+    background: linear-gradient(135deg,#2563eb,#3b82f6);
+    color: white;
+}
+
+.join-btn:hover{
+    transform: translateY(-3px);
+}
+
+.joined-btn{
+    background: linear-gradient(135deg,#16a34a,#22c55e);
+    color: white;
+}
+
+.upcoming-btn{
+    background: linear-gradient(135deg,#d97706,#f59e0b);
+    color: white;
+}
+
+.ended-btn{
+    background: linear-gradient(135deg,#475569,#64748b);
+    color: white;
+}
+
+/* ATTENDANCE */
+
+.attendance-box{
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* ADMIN BUTTONS */
+
+.admin-btn{
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+/* EMPTY */
+
+.empty-box{
+    background: white;
+    padding: 80px 30px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.empty-box h3{
+    font-weight: 700;
+    margin-top: 15px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .events-header{
+        padding: 35px 25px;
+    }
+
+    .events-header h2{
+        font-size: 30px;
+    }
+
+    .event-image{
+        height: 220px;
+    }
+}
+
+</style>
+
 <div class="container my-5">
 
-    <!-- ================= MESSAGES ================= -->
+    <!-- ================= ALERTS ================= -->
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-success alert-dismissible fade show">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
             </div>
         {% endfor %}
     {% endif %}
 
     <!-- ================= HEADER ================= -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h2>📅 Community Events</h2>
+    <div class="events-header">
 
-        {% if request.user.is_authenticated and request.user.role == 'leader' or request.user.is_superuser %}
-            <a href="{% url 'create_event' %}" class="btn btn-success">
-                ➕ Create Event
-            </a>
-        {% endif %}
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+            <div>
+                <h2>📅 Community Events</h2>
+
+                <p class="mt-3">
+                    Stay connected with leadership programs, development activities,
+                    public participation forums, youth empowerment initiatives,
+                    and live county events.
+                </p>
+            </div>
+
+            {% if request.user.is_authenticated and request.user.role == 'coordinator' or request.user.is_superuser %}
+
+                <a href="{% url 'create_event' %}"
+                   class="btn btn-success btn-lg px-4">
+
+                    ➕ Create Event
+
+                </a>
+
+            {% endif %}
+
+        </div>
 
     </div>
 
-    <!-- ================= EVENTS GRID ================= -->
+    <!-- ================= EVENTS ================= -->
+
     <div class="row g-4">
 
         {% for e in events %}
 
             {% if e.approval_status == "approved" or request.user.is_superuser or request.user == e.created_by %}
 
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-6">
 
-                <div class="card shadow-sm h-100">
+                <div class="event-card">
 
                     <!-- IMAGE -->
-                    {% if e.image %}
-                        <img src="{{ e.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
-                    {% else %}
-                        <img src="{% static 'images/event.jpg' %}" class="card-img-top" style="height:200px; object-fit:cover;">
-                    {% endif %}
 
-                    <div class="card-body">
+                    <div class="event-image">
 
-                        <!-- STATUS -->
-                        {% if e.approval_status == "pending" %}
-                            <span class="badge bg-warning mb-2">Pending</span>
-                        {% elif e.approval_status == "approved" %}
-                            <span class="badge bg-success mb-2">Approved</span>
-                        {% elif e.approval_status == "rejected" %}
-                            <span class="badge bg-danger mb-2">Rejected</span>
+                        {% if e.image %}
+                            <img src="{{ e.image.url }}" alt="{{ e.title }}">
+                        {% else %}
+                            <img src="{% static 'images/event.jpg' %}" alt="">
                         {% endif %}
 
-                        <h5 class="fw-bold">{{ e.title }}</h5>
+                        <!-- AUTO STATUS -->
 
-                        <p class="text-muted mb-1">📍 {{ e.location }}</p>
-                        <p class="text-muted mb-2">📅 {{ e.date }}</p>
+                        {% if e.status == "LIVE" %}
 
-                        <p>
-                            {{ e.description|truncatechars:120 }}
+                            <span class="status-badge live">
+                                🔴 LIVE
+                            </span>
+
+                        {% elif e.status == "UPCOMING" %}
+
+                            <span class="status-badge upcoming">
+                                ⏳ UPCOMING
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge ended">
+                                ❌ ENDED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- BODY -->
+
+                    <div class="event-body">
+
+                        <h4 class="event-title">
+                            {{ e.title }}
+                        </h4>
+
+                        <div class="event-meta">
+                            📍 {{ e.location }}
+                        </div>
+
+                        <div class="event-meta">
+                            📅 {{ e.date }}
+                        </div>
+
+                        <p class="event-desc">
+                            {{ e.description|truncatechars:140 }}
                         </p>
 
-                        <!-- JOIN BUTTON -->
-                        {% if joined_events and e.id in joined_events %}
-                            <button class="btn btn-success btn-sm w-100 mb-2" disabled>
-                                ✔ Joined
+                        <!-- JOIN LOGIC -->
+
+                        {% if e.status == "ENDED" %}
+
+                            <button class="event-btn ended-btn" disabled>
+                                ❌ Event Ended
                             </button>
+
+                        {% elif e.status == "UPCOMING" %}
+
+                            <button class="event-btn upcoming-btn" disabled>
+                                ⏳ Upcoming Event
+                            </button>
+
+                        {% elif joined_events and e.id in joined_events %}
+
+                            <button class="event-btn joined-btn" disabled>
+                                ✔ Already Joined
+                            </button>
+
                         {% else %}
-                            <button 
-    id="join-btn-{{ e.id }}"
-    class="btn btn-primary btn-sm w-100 mb-2"
-    onclick="joinEvent({{ e.id }})">
-    Join Event
-</button>
+
+                            <button
+                                id="join-btn-{{ e.id }}"
+                                class="event-btn join-btn"
+                                onclick="joinEvent({{ e.id }})">
+
+                                🔴 Join Live Event
+
+                            </button>
+
                         {% endif %}
 
                         <!-- ATTENDANCE -->
-                        <p class="small text-secondary mb-2">
-                            👥 {{ e.attendance_set.count }} joined
-                        </p>
 
-                        <!-- EDIT (leader only) -->
+                        <div class="attendance-box">
+
+                            👥
+                            <span id="count-{{ e.id }}">
+                                {{ e.attendance_set.count }}
+                            </span>
+
+                            participants joined
+
+                        </div>
+
+                        <!-- APPROVAL STATUS -->
+
+                        <div class="mt-3">
+
+                            {% if e.approval_status == "pending" %}
+                                <span class="badge bg-warning">
+                                    Pending Approval
+                                </span>
+
+                            {% elif e.approval_status == "approved" %}
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+
+                            {% elif e.approval_status == "rejected" %}
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- EDIT -->
+
                         {% if request.user == e.created_by and e.approval_status == "pending" %}
-                            <a href="{% url 'edit_event' e.id %}" class="btn btn-warning btn-sm w-100 mb-2">
-                                Edit
+
+                            <a href="{% url 'edit_event' e.id %}"
+                               class="btn btn-warning btn-sm w-100 admin-btn">
+
+                                ✏ Edit Event
+
                             </a>
+
                         {% endif %}
 
                         <!-- ADMIN ACTIONS -->
+
                         {% if request.user.is_superuser %}
 
                             {% if e.approval_status == "pending" %}
-                                <a href="{% url 'approve_event' e.id %}" class="btn btn-success btn-sm w-100 mb-2">
-                                    Approve
+
+                                <a href="{% url 'approve_event' e.id %}"
+                                   class="btn btn-success btn-sm w-100 admin-btn">
+
+                                    ✔ Approve Event
+
                                 </a>
 
-                                <a href="{% url 'reject_event' e.id %}" class="btn btn-danger btn-sm w-100 mb-2">
-                                    Reject
+                                <a href="{% url 'reject_event' e.id %}"
+                                   class="btn btn-danger btn-sm w-100 admin-btn">
+
+                                    ❌ Reject Event
+
                                 </a>
+
                             {% endif %}
 
-                            <a href="{% url 'delete_event' e.id %}" class="btn btn-dark btn-sm w-100">
-                                Delete
+                            <a href="{% url 'delete_event' e.id %}"
+                               class="btn btn-dark btn-sm w-100 admin-btn">
+
+                                🗑 Delete Event
+
                             </a>
 
                         {% endif %}
@@ -121,60 +449,103 @@
 
         {% empty %}
 
-        <div class="col-12 text-center">
-            <p class="text-muted">No events available yet.</p>
-        </div>
+            <div class="col-12">
+
+                <div class="empty-box">
+
+                    <h1>📭</h1>
+
+                    <h3>No Events Available</h3>
+
+                    <p class="text-muted mt-3">
+                        There are currently no approved events available.
+                    </p>
+
+                </div>
+
+            </div>
 
         {% endfor %}
 
     </div>
 
 </div>
+
+<!-- ================= JOIN EVENT SCRIPT ================= -->
+
 <script>
+
 function getCookie(name) {
+
     let cookieValue = null;
+
     if (document.cookie && document.cookie !== '') {
+
         const cookies = document.cookie.split(';');
+
         for (let i = 0; i < cookies.length; i++) {
+
             const cookie = cookies[i].trim();
+
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+
                 break;
             }
         }
     }
+
     return cookieValue;
 }
 
 function joinEvent(eventId) {
 
     fetch(`/join-event/${eventId}/`, {
+
         method: "POST",
+
         headers: {
             "X-CSRFToken": getCookie('csrftoken'),
+            "Content-Type": "application/json"
         }
+
     })
+
     .then(res => res.json())
+
     .then(data => {
 
         alert(data.message);
 
         if (data.success) {
 
-            // change button instantly
+            // UPDATE BUTTON
+
             let btn = document.getElementById(`join-btn-${eventId}`);
+
             btn.innerText = "✔ Joined";
-            btn.classList.remove("btn-primary");
-            btn.classList.add("btn-success");
+            btn.classList.remove("join-btn");
+            btn.classList.add("joined-btn");
             btn.disabled = true;
+
+            // UPDATE COUNT
+
+            document.getElementById(`count-${eventId}`).innerText = data.count;
         }
 
     })
-    .catch(error => {
-        console.error(error);
-        alert("Request failed");
-    });
 
+    .catch(error => {
+
+        console.error("JOIN ERROR:", error);
+
+        alert("❌ Request failed.");
+    });
 }
+
 </script>
+
 {% endblock %}

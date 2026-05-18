@@ -5,76 +5,131 @@
 
 <style>
 
-/* ================= GLOBAL SECTION STYLE ================= */
+/* ================= GLOBAL ================= */
 .section-container{
-    padding: 70px 0;
+    padding: 80px 0;
 }
 
+.section-title{
+    text-align: center;
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.section-subtitle{
+    text-align: center;
+    color: #64748b;
+    max-width: 850px;
+    margin: auto;
+    margin-bottom: 60px;
+    line-height: 1.8;
+}
+
+/* ================= HERO ================= */
+.about-hero{
+    position: relative;
+    overflow: hidden;
+    border-radius: 35px;
+    padding: 120px 50px;
+    text-align: center;
+    color: #fff;
+
+    background:
+        linear-gradient(rgba(15,23,42,0.78), rgba(15,23,42,0.78)),
+        url("{% static 'projects/banner.jpg' %}");
+
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+
+.about-hero h1{
+    font-size: 58px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.about-hero p{
+    font-size: 18px;
+    max-width: 900px;
+    margin: auto;
+    color: rgba(255,255,255,0.85);
+}
+
+/* ================= CARD ================= */
 .section-box{
     background: #fff;
-    border-radius: 18px;
+    border-radius: 25px;
     padding: 40px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-/* HERO */
-.about-hero{
-    background:
-    linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-    url("{% static 'projects/about.jpg' %}");
-    background-size: cover;
-    background-position: center;
-    border-radius: 20px;
-    padding: 100px 30px;
-    color: white;
-    text-align: center;
-}
-
-/* STATS */
-.stat-card{
-    background: linear-gradient(135deg,#0d6efd,#6610f2);
-    color: white;
-    border-radius: 18px;
-    padding: 30px;
-    text-align: center;
-    transition: 0.3s;
-    height: 100%;
-}
-
-.stat-card:hover{
-    transform: translateY(-5px);
-}
-
-.stat-number{
-    font-size: 40px;
-    font-weight: bold;
-}
-
-.feature-card{
+/* ================= ACHIEVEMENTS ================= */
+.ach-card{
     background: #fff;
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 25px;
-    text-align: center;
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     height: 100%;
     transition: 0.3s;
+    border-left: 5px solid #16a34a;
 }
 
-.feature-card:hover{
+.ach-card:hover{
     transform: translateY(-8px);
 }
 
-.feature-icon{
-    font-size: 45px;
-    margin-bottom: 15px;
+.ach-title{
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #0f172a;
 }
 
-.cta-section{
-    background: linear-gradient(135deg,#0d6efd,#198754);
+.ach-text{
+    color: #64748b;
+    font-size: 14.5px;
+    line-height: 1.7;
+}
+
+/* ================= STATS ================= */
+.stat-card{
+    background: linear-gradient(135deg,#0f172a,#1e293b);
     color: white;
-    padding: 60px;
     border-radius: 20px;
+    padding: 35px;
     text-align: center;
+    transition: 0.3s;
+}
+
+.stat-card:hover{
+    transform: translateY(-6px);
+    background: linear-gradient(135deg,#16a34a,#15803d);
+}
+
+.stat-number{
+    font-size: 42px;
+    font-weight: 800;
+}
+
+/* ================= CTA ================= */
+.cta-section{
+    background: linear-gradient(135deg,#16a34a,#0f172a);
+    color: white;
+    padding: 70px;
+    border-radius: 25px;
+    text-align: center;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+    .about-hero{
+        padding: 90px 25px;
+    }
+
+    .about-hero h1{
+        font-size: 34px;
+    }
 }
 
 </style>
@@ -83,13 +138,14 @@
 <!-- ================= HERO ================= -->
 <div class="container section-container">
 
-    <div class="about-hero" data-aos="fade-up">
+    <div class="about-hero">
 
-        <h1>🏛️ Leadership & Governance Platform</h1>
+        <h1>🏛️ Leadership & Governance Profile</h1>
 
-        <p class="mt-3">
-            A citizen engagement system built around accountable leadership,
-            development delivery, and transparent governance.
+        <p>
+            A seasoned economist, public policy leader, and former Governor of Laikipia
+            with over 35 years of experience in finance, governance, industrial development,
+            and transformative public service.
         </p>
 
     </div>
@@ -97,213 +153,206 @@
 </div>
 
 
-<!-- ================= LEADER PROFILE ================= -->
+<!-- ================= FULL BIO ================= -->
 <div class="container section-container">
 
-    <div class="row g-5 align-items-center section-box">
+    <div class="section-box">
 
-        <div class="col-md-6" data-aos="fade-right">
+        <h2 class="section-title">Profile Summary</h2>
 
-            <img src="{% static 'projects/aboutt.jpg' %}"
-                 class="img-fluid rounded-4 shadow">
+        <p>
+            <strong>Ndiritu Muriithi</strong> is a seasoned economist and financial markets expert with over 35 years
+            of experience across international finance, governance, industrial development, and public policy
+            in Kenya, South Africa, Canada, and Australia.
+        </p>
 
-        </div>
+        <p>
+            He previously served as the 2nd Governor of Laikipia County, where he pioneered innovative financing
+            models including leasing structures for equipment acquisition and became the first county leader
+            in Kenya to explore infrastructure bond financing for long-term development funding.
+        </p>
 
-        <div class="col-md-6" data-aos="fade-left">
+        <p>
+            His leadership introduced the Smart Towns Initiative, modernizing urban planning, infrastructure,
+            and investment readiness across Laikipia. He also expanded rural road networks to improve trade,
+            mobility, and access to essential services.
+        </p>
 
-            <h2>Leadership Vision</h2>
+        <p>
+            In economic development, he introduced SME support programs, manufacturer rebate systems,
+            and interest subsidy financing in partnership with KCB Bank Kenya to stimulate business growth
+            and industrialization.
+        </p>
 
-            <p>
-                This platform represents a governance model focused on development with accountability,
-                economic transformation, and inclusive service delivery.
-            </p>
+        <p>
+            In healthcare, his administration strengthened medical infrastructure and expanded access to
+            quality healthcare services across the county.
+        </p>
 
-            <p>
-                It enables citizens to directly engage leadership through structured feedback systems,
-                track development progress, and participate in governance processes.
-            </p>
+        <p>
+            He also spearheaded a comprehensive water masterplan, delivering flagship projects such as
+            the Solio Water Project and Makurian Water Project, extending clean piped water to communities
+            over 70km away.
+        </p>
 
-            <a href="{% url 'submit_ground_voice' %}"
-               class="btn btn-danger btn-lg mt-3">
-                📢 Ground Voice
-            </a>
+        <p>
+            Earlier, as Member of Parliament for Laikipia West and Assistant Minister for Industrialization,
+            he championed SME reforms, credit information sharing laws, and education expansion programs.
+        </p>
 
-        </div>
+        <p>
+            He sponsored the establishment of 23 secondary schools, 3 youth polytechnics, and a university
+            in Laikipia West, significantly improving education access.
+        </p>
+
+        <p>
+            He also led national peace-building initiatives including the Laikipia Peace Caravan,
+            covering 32 districts and reducing inter-community conflict between 2009–2012.
+        </p>
+
+        <p>
+            Before public office, he worked at the International Finance Corporation (IFC), where he helped
+            design financial systems including credit bureaus, mortgage markets, SME banking systems,
+            and women-enterprise financing programs across Africa.
+        </p>
+
+        <p>
+            Currently, he supports over 10 counties in Kenya in SME development and Own Source Revenue (OSR)
+            optimization and mentors entrepreneurs through the Ujuzi na Biashara Trust.
+        </p>
 
     </div>
 
 </div>
 
 
-<!-- ================= STATS + ROTATING IMAGES ================= -->
-<div class="container section-container my-5">
-
-    <div class="row g-5 align-items-center">
-
-        <!-- ================= IMAGE CAROUSEL ================= -->
-        <div class="col-md-6">
-
-            <div id="statsCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden"
-                 data-bs-ride="carousel"
-                 data-bs-interval="5000">
-
-                <div class="carousel-inner">
-
-                    <div class="carousel-item active">
-                        <img src="{% static 'projects/slide.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide2.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide3.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-                    <div class="carousel-item active">
-                        <img src="{% static 'projects/slide4.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide5.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide6.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-                    <div class="carousel-item active">
-                        <img src="{% static 'projects/slide7.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide8.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{% static 'projects/slide1.jpg' %}"
-                             class="d-block w-100 stats-img">
-                    </div>
-
-                    
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- ================= STATS ================= -->
-        <div class="col-md-6">
-
-            <div class="row g-4 text-center">
-
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-number">32+</div>
-                        <h5>Administrative Areas</h5>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-number">150+</div>
-                        <h5>Development Projects</h5>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-number">45+</div>
-                        <h5>Programs Implemented</h5>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-number">1</div>
-                        <h5>Unified Vision</h5>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ================= MISSION & VISION ================= -->
+<!-- ================= KEY ACHIEVEMENTS ================= -->
 <div class="container section-container">
 
-    <div class="row g-4">
+    <h2 class="section-title">Key Achievements</h2>
 
-        <div class="col-md-6">
-            <div class="section-box">
-                <h3>🎯 Mission</h3>
-                <p>
-                    To strengthen governance through transparency,
-                    citizen participation, and effective development delivery.
-                </p>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="section-box">
-                <h3>🚀 Vision</h3>
-                <p>
-                    A fully accountable governance system where citizens
-                    actively participate in shaping public service delivery.
-                </p>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= FEATURES ================= -->
-<div class="container section-container">
-
-    <div class="text-center mb-5">
-
-        <h2>Governance Tools</h2>
-
-        <p>Digital systems enabling accountability and citizen engagement</p>
-
-    </div>
+    <p class="section-subtitle">
+        Major contributions in governance, infrastructure, finance, education, healthcare, and peace-building.
+    </p>
 
     <div class="row g-4">
 
         <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon">📢</div>
-                <h4>Ground Voice</h4>
-                <p>Citizen reporting system for grievances and feedback.</p>
+            <div class="ach-card">
+                <div class="ach-title">🏗 Infrastructure Innovation</div>
+                <div class="ach-text">
+                    Introduced leasing models and pioneered infrastructure bond financing for county development.
+                </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon">🏗️</div>
-                <h4>Development Tracking</h4>
-                <p>Monitor ongoing and completed projects across regions.</p>
+            <div class="ach-card">
+                <div class="ach-title">🏙 Smart Towns Program</div>
+                <div class="ach-text">
+                    Modernized urban planning and improved investment readiness across Laikipia County.
+                </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h4>Analytics</h4>
-                <p>Data-driven governance insights and performance tracking.</p>
+            <div class="ach-card">
+                <div class="ach-title">💰 SME Development</div>
+                <div class="ach-text">
+                    Introduced rebate programs, interest subsidies, and SME financing partnerships with KCB.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">🏥 Healthcare Expansion</div>
+                <div class="ach-text">
+                    Improved healthcare systems and expanded access to quality medical services countywide.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">💧 Water Projects</div>
+                <div class="ach-text">
+                    Delivered Solio and Makurian water projects extending clean water to remote communities.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">🎓 Education Expansion</div>
+                <div class="ach-text">
+                    Established 23 secondary schools, 3 youth polytechnics, and a university in Laikipia West.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">⚖️ Governance Reform</div>
+                <div class="ach-text">
+                    Advocated credit information sharing laws and SME-friendly financial regulations.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">🤝 Peace Building</div>
+                <div class="ach-text">
+                    Led Laikipia Peace Caravan across 32 districts reducing inter-community conflicts.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="ach-card">
+                <div class="ach-title">🌍 IFC Experience</div>
+                <div class="ach-text">
+                    Designed financial systems across Africa including credit bureaus and SME banking reforms.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= STATS ================= -->
+<div class="container section-container">
+
+    <div class="row g-4 text-center">
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">35+</div>
+                <h5>Years Experience</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">23</div>
+                <h5>Schools Established</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">32</div>
+                <h5>Districts Covered</h5>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number">10+</div>
+                <h5>Counties Supported</h5>
             </div>
         </div>
 
@@ -317,17 +366,15 @@
 
     <div class="cta-section">
 
-        <h2>Participate in Governance</h2>
+        <h2>Engage with Leadership</h2>
 
         <p class="mt-3">
-            Engage with leadership, report issues, and track development in real time.
+            Participate in governance, submit feedback, and track development progress.
         </p>
 
         <a href="{% url 'submit_ground_voice' %}"
            class="btn btn-light btn-lg mt-3 px-5">
-
             📢 Submit Ground Voice
-
         </a>
 
     </div>

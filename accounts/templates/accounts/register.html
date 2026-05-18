@@ -159,13 +159,23 @@
             <div class="section-title">LOCATION</div>
 
             <div class="mb-3">
-                <select name="constituency" id="constituency" class="form-select" required>
-                    <option value="">Select Constituency</option>
-                    {% for c in constituencies %}
-                        <option value="{{ c.id }}">{{ c.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <select name="constituency"
+            id="constituency"
+            class="form-select"
+            required>
+
+        <option value="">
+            Select Constituency
+        </option>
+
+        {% for c in constituencies %}
+            <option value="{{ c.id }}">
+                {{ c.name }}
+            </option>
+        {% endfor %}
+
+    </select>
+</div>
 
             <div class="mb-3">
                 <select name="ward" id="ward" class="form-select" disabled required>
@@ -197,7 +207,79 @@
                        class="form-control" placeholder="Specify Profession"
                        style="display:none;">
             </div>
+    
 
+    <!-- ================= VOLUNTEER INTEREST ================= -->
+
+<div class="section-title">
+    VOLUNTEER INTEREST
+</div>
+
+<div class="mb-3">
+
+    <select name="volunteer_role"
+            id="volunteer_role"
+            class="form-select"
+            required>
+
+        <option value="">
+            Select Volunteer Area
+        </option>
+
+        <option value="Fundraising Support">
+            💰 Fundraising Support
+        </option>
+
+        <option value="Door-to-door Campaign">
+            🚪 Door-to-door Campaign
+        </option>
+
+        <option value="Mobilising Voters">
+            📢 Mobilising Voters
+        </option>
+
+        <option value="Social Media Support">
+            📱 Social Media Support
+        </option>
+
+        <option value="Recruiting Volunteers">
+            👥 Recruiting Volunteers
+        </option>
+
+        <option value="Distributing Campaign Materials">
+            📦 Distributing Campaign Materials
+        </option>
+
+        <option value="Data Collection">
+            📊 Data Collection
+        </option>
+
+        <option value="Community Listening">
+            🗣 Community Listening
+        </option>
+
+        <option value="Holding Barazas & Household Meetings">
+            🏛 Holding Barazas & Household Meetings
+        </option>
+
+        <option value="Other">
+            ✍ Other
+        </option>
+
+    </select>
+
+</div>
+
+<div class="mb-3">
+
+    <input type="text"
+           name="other_volunteer_role"
+           id="other_volunteer_role"
+           class="form-control"
+           placeholder="Specify Volunteer Area"
+           style="display:none;">
+
+</div>
             <div class="section-title">SECURITY</div>
 
             <div class="mb-3">
@@ -229,58 +311,104 @@
 
 <script>
 
-    // PROFESSION
-    $("#profession").change(function () {
-        if ($(this).val() === "other") {
+$(document).ready(function () {
+
+    // ================= PROFESSION =================
+    $("#profession").on("change", function () {
+        let value = $(this).val();
+
+        if (value === "other") {
             $("#other_profession").slideDown();
         } else {
             $("#other_profession").slideUp().val("");
         }
     });
 
-    // CONSTITUENCY → WARD
+
+    // ================= VOLUNTEER ROLE =================
+    $("#volunteer_role").on("change", function () {
+        let value = $(this).val();
+
+        if (value === "Other") {
+            $("#other_volunteer_role").slideDown();
+        } else {
+            $("#other_volunteer_role").slideUp().val("");
+        }
+    });
+
+
+    // ================= CONSTITUENCY → WARD =================
     $("#constituency").change(function () {
 
         let id = $(this).val();
+        if (!id) return;
+
+        // RESET CHILD DROPDOWNS
+        $("#ward")
+            .prop("disabled", true)
+            .html('<option value="">Select Ward</option>');
+
+        $("#polling")
+            .prop("disabled", true)
+            .html('<option value="">Select Polling Station</option>');
 
         $.ajax({
             url: "{% url 'load_wards' %}",
             data: { constituency_id: id },
+            dataType: "json",
+
             success: function (data) {
 
-                $("#ward").prop("disabled", false).html('<option>Select Ward</option>');
+                $("#ward").prop("disabled", false);
 
                 data.forEach(item => {
-                    $("#ward").append(`<option value="${item.id}">${item.name}</option>`);
+                    $("#ward").append(
+                        `<option value="${item.id}">${item.name}</option>`
+                    );
                 });
+            },
 
+            error: function (xhr, status, error) {
+                console.log("Ward AJAX Error:", error);
             }
         });
-
     });
 
-    // WARD → POLLING
+
+    // ================= WARD → POLLING =================
     $("#ward").change(function () {
 
         let id = $(this).val();
+        if (!id) return;
+
+        $("#polling")
+            .prop("disabled", true)
+            .html('<option value="">Select Polling Station</option>');
 
         $.ajax({
-            url: "{% url 'load_polling' %}",
+            url: "{% url 'load_polling_stations' %}",
             data: { ward_id: id },
+            dataType: "json",
+
             success: function (data) {
 
-                $("#polling").prop("disabled", false).html('<option>Select Polling Station</option>');
+                $("#polling").prop("disabled", false);
 
                 data.forEach(item => {
-                    $("#polling").append(`<option value="${item.id}">${item.name}</option>`);
+                    $("#polling").append(
+                        `<option value="${item.id}">${item.name}</option>`
+                    );
                 });
+            },
 
+            error: function (xhr, status, error) {
+                console.log("Polling AJAX Error:", error);
             }
         });
-
     });
 
-</script>
+});
 
+</script>
 </body>
 </html>

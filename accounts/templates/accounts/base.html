@@ -134,7 +134,7 @@
         .btn-success:hover{
             background:#15803d;
         }
-
+        
         /* =====================================
                 CONTENT AREA
         ===================================== */
@@ -328,7 +328,7 @@
                     {% url 'home' %}
                  {% endif %}">
 
-            🌍 <span>Volunteer</span>
+            🌍 <span> I stand for Laikipia</span>
 
         </a>
 
@@ -353,7 +353,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About</a>
+                    <a class="nav-link" href="{% url 'about' %}">About Our Candidate</a>
                 </li>
 
                 <li class="nav-item">
@@ -363,7 +363,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'volunteers' %}">Volunteers</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gallery' %}">Gallery</a>
+                </li>
                 <!-- ================= ADMIN / LEADER ONLY ================= -->
                 {% if request.user.is_authenticated and request.user.role in "admin leader" or request.user.is_superuser %}
 

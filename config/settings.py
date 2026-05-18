@@ -148,3 +148,7 @@ AFRICASTALKING_USERNAME = "sandbox"
 AFRICASTALKING_API_KEY = "testkey"
 STATIC_URL = '/static/'
 
+# ================= MEDIA FILES (UPLOADS) =================
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

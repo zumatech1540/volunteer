@@ -5,10 +5,8 @@
 
     <div class="card shadow-lg p-4">
 
-        <!-- ================= TITLE ================= -->
         <h3 class="mb-3">➕ Create Community Event</h3>
 
-        <!-- ================= MESSAGES ================= -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success">
@@ -23,8 +21,8 @@
             </div>
         {% endif %}
 
-        <!-- ================= FORM ================= -->
         <form method="POST" enctype="multipart/form-data">
+            
 
             {% csrf_token %}
 
@@ -52,15 +50,27 @@
                 <input type="date" name="date" class="form-control" required>
             </div>
 
+            <!-- START TIME -->
+            <div class="mb-3">
+                <label class="form-label">Start Time</label>
+                <input type="time" name="start_time" class="form-control" required>
+            </div>
+
+            <!-- END TIME -->
+            <div class="mb-3">
+                <label class="form-label">End Time</label>
+                <input type="time" name="end_time" class="form-control" required>
+            </div>
+
             <!-- IMAGE -->
             <div class="mb-3">
                 <label class="form-label">Event Image</label>
                 <input type="file" name="image" class="form-control" id="imageInput">
             </div>
 
-            <!-- IMAGE PREVIEW -->
+            <!-- PREVIEW -->
             <img id="preview"
-                 style="width:100%; display:none; margin-bottom:15px; border-radius:10px;"/>
+                 style="width:100%; display:none; margin-bottom:15px; border-radius:10px;" />
 
             <!-- BUTTONS -->
             <div class="d-flex gap-2">
@@ -88,18 +98,15 @@
 
 </div>
 
-<!-- ================= IMAGE PREVIEW SCRIPT ================= -->
+<!-- IMAGE PREVIEW -->
 <script>
 document.getElementById("imageInput").addEventListener("change", function(event) {
-
     const file = event.target.files[0];
-
     if (file) {
         const preview = document.getElementById("preview");
         preview.src = URL.createObjectURL(file);
         preview.style.display = "block";
     }
-
 });
 </script>
 

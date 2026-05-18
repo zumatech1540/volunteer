@@ -11,11 +11,20 @@ from django.shortcuts import render, redirect
 import json
 from django.http import JsonResponse
 from .models import ExpenseLog, EventBudget, EventParticipant
+from django.http import JsonResponse
+
+from django.utils import timezone
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 import json
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from .models import Gallery
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -120,10 +129,16 @@ def home(request):
 
 
 
+from django.contrib import messages
+from django.contrib.auth import login
+from .models import User, County, Constituency, Ward, PollingStation
+
+
+from .models import Constituency
+
 def register_view(request):
 
-    county = County.objects.filter(name__icontains="Laikipia").first()
-    constituencies = Constituency.objects.filter(county=county) if county else Constituency.objects.none()
+    constituencies = Constituency.objects.all()
 
     if request.method == "POST":
 
@@ -138,6 +153,9 @@ def register_view(request):
 
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
+
+        volunteer_role = request.POST.get("volunteer_role")
+        other_role = request.POST.get("other_volunteer_role")
 
         if password1 != password2:
             messages.error(request, "Passwords do not match")
@@ -157,25 +175,22 @@ def register_view(request):
 
         user.role = "volunteer"
         user.phone = phone
-        user.county = county
 
-        if constituency_id:
-            user.constituency_id = constituency_id
-        if ward_id:
-            user.ward_id = ward_id
-        if polling_station_id:
-            user.polling_station_id = polling_station_id
+        user.constituency_id = constituency_id or None
+        user.ward_id = ward_id or None
+        user.polling_station_id = polling_station_id or None
+
+        user.volunteer_role = volunteer_role
+        user.other_volunteer_role = other_role
 
         user.save()
 
         login(request, user)
-
         return redirect("volunteer_dashboard")
 
     return render(request, "accounts/register.html", {
         "constituencies": constituencies
     })
-    
 
 from django.http import JsonResponse
 from .models import Constituency, Ward, PollingStation
@@ -197,7 +212,6 @@ def load_polling_stations(request):
     ward_id = request.GET.get('ward_id')
     data = list(PollingStation.objects.filter(ward_id=ward_id).values('id', 'name'))
     return JsonResponse(data, safe=False)
-
 
 # LOGIN
 
@@ -248,11 +262,20 @@ def volunteers(request):
 def events(request):
     return render(request, 'accounts/events.html')
 
+def gallery(request):
+    return render(request, 'accounts/gallery.html')
 
 def contact(request):
     return render(request, 'accounts/contact.html')
 
 
+def gallery_view(request):
+
+    gallery_items = Gallery.objects.all()
+
+    return render(request, 'accounts/gallery.html', {
+        'gallery_items': gallery_items
+    })
 
 # LOGOUT
 def logout_view(request):
@@ -523,39 +546,46 @@ def volunteer_dashboard(request):
     return render(request, "accounts/volunteer_dashboard.html", context)
 
 
+def events(request):
+
+    if request.user.is_superuser:
+        events = Event.objects.all()
+    else:
+        events = Event.objects.filter(approval_status='approved')
+
+    return render(request, 'accounts/events.html', {
+        'events': events
+    })
 # 🙋                                        create_event
 @login_required
 def create_event(request):
 
-    # only admin and leader can create events
     if request.user.role not in ['admin', 'coordinator']:
         return redirect('home')
 
     form = EventForm()
 
     if request.method == "POST":
-        form = EventForm(request.POST)
+        form = EventForm(request.POST, request.FILES)
 
         if form.is_valid():
             event = form.save(commit=False)
             event.created_by = request.user
 
-            # leaders create but still pending approval
-            if request.user.role == 'coordinator':
+            # 🔥 RULE-BASED APPROVAL SYSTEM
+            if request.user.role == 'admin':
+                event.approval_status = 'approved'
+                event.approved_by = request.user
+                event.approved_at = timezone.now()
+
+            elif request.user.role == 'coordinator':
                 event.approval_status = 'pending'
 
-            # admins can auto-approve if you want (optional)
-            elif request.user.role == 'admin':
-                event.approval_status = 'approved'
-
             event.save()
+
             return redirect('events')
 
     return render(request, 'accounts/create_event.html', {'form': form})
-
-
-
-
 
 @login_required
 @coordinator_required
@@ -568,32 +598,23 @@ def leader_create_event(request):
         date = request.POST.get("date")
         description = request.POST.get("description")
 
+        # 🔥 FIX: get uploaded image
+        image = request.FILES.get("image")
+
         Event.objects.create(
             title=title,
             location=location,
             date=date,
             description=description,
+            image=image,   # ✅ ADD THIS LINE
 
-            # 🔥 IMPORTANT: leader-created events always start as pending
             approval_status="pending",
-
             created_by=request.user
         )
 
         return redirect("leader_dashboard")
 
     return render(request, "accounts/create_event.html")
-
-
-
-@login_required
-@admin_required
-def events(request):
-
-    events = Event.objects.all()
-
-    return render(request, 'accounts/events.html', {'events': events})
-
 
 
 @login_required
@@ -637,33 +658,54 @@ def delete_event(request, event_id):
 
 
 
-from django.http import JsonResponse
+
+from django.utils import timezone
 
 @login_required
 def join_event(request, event_id):
 
     event = get_object_or_404(Event, id=event_id)
 
+    today = timezone.now().date()
+
+    # ❌ EVENT NOT LIVE
+    if event.date != today:
+
+        if event.date > today:
+            return JsonResponse({
+                "success": False,
+                "message": "⏳ You can only join this event on the event day."
+            })
+
+        else:
+            return JsonResponse({
+                "success": False,
+                "message": "❌ This event has already ended."
+            })
+
+    # ✅ CHECK IF ALREADY JOINED
     already_joined = EventParticipant.objects.filter(
         event=event,
         user=request.user
     ).exists()
 
-    if not already_joined:
-        EventParticipant.objects.create(
-            event=event,
-            user=request.user
-        )
+    if already_joined:
         return JsonResponse({
-            "success": True,
-            "message": "You have successfully joined the event."
+            "success": False,
+            "message": "✔ You already joined this event."
         })
 
-    return JsonResponse({
-        "success": False,
-        "message": "You already joined this event."
-    })
+    # ✅ JOIN EVENT
+    EventParticipant.objects.create(
+        event=event,
+        user=request.user
+    )
 
+    return JsonResponse({
+        "success": True,
+        "message": "🎉 Successfully joined live event.",
+        "count": EventParticipant.objects.filter(event=event).count()
+    })
 
 @login_required
 @admin_required
@@ -1452,3 +1494,66 @@ def create_event_budget(request):
             "events": events
         }
     )
+
+# views.py
+
+
+
+
+# DISPLAY (ONLY APPROVED FOR VOLUNTEERS)
+def gallery(request):
+
+    user_role = request.GET.get("role", "volunteer")
+
+    if user_role in ["admin", "coordinator"]:
+        items = Gallery.objects.all().order_by('-created_at')
+    else:
+        items = Gallery.objects.filter(is_approved=True).order_by('-created_at')
+
+    return render(request, 'accounts/gallery.html', {
+        'gallery_items': items,
+        'role': user_role
+    })
+
+
+# UPLOAD (ONLY ADMIN/COORDINATOR)
+def upload_media(request):
+
+    if request.method == "POST":
+
+        role = request.POST.get("role")
+
+        print("ROLE:", role)  # DEBUG
+
+        if role not in ["admin", "coordinator"]:
+            return JsonResponse({
+                "success": False,
+                "message": "Permission denied"
+            })
+
+        image = request.FILES.get('image')
+        video_url = request.POST.get('video_url')
+
+        Gallery.objects.create(
+            image=image,
+            video_url=video_url,
+            is_approved=True
+        )
+
+        return JsonResponse({
+            "success": True,
+            "message": "Uploaded successfully"
+        })
+
+# DELETE (ONLY ADMIN)
+def delete_media(request, id):
+
+    role = request.GET.get("role")
+
+    if role != "admin":
+        return JsonResponse({"success": False, "message": "Only admin can delete"})
+
+    item = get_object_or_404(Gallery, id=id)
+    item.delete()
+
+    return JsonResponse({"success": True})

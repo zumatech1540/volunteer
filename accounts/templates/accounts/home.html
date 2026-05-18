@@ -171,86 +171,271 @@
 </div>
 
 <!-- ================= PROJECTS SECTION ================= -->
-<!-- ================= KEY ACHIEVEMENTS ================= -->
+ <style>
+    .premium-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: 0.3s;
+        height: 100%;
+        overflow: visible !important;
+    }
+
+    .premium-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* VERY IMPORTANT */
+    .premium-card img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: unset !important;
+        max-height: none !important;
+        display: block;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    .premium-card .p-3 {
+        padding: 20px;
+    }
+
+    .premium-card h5 {
+        font-weight: 700;
+        margin-top: 10px;
+    }
+
+    .premium-card p {
+        color: #555;
+        font-size: 15px;
+    }
+</style>
+
+
+<!-- ================= OUR VISION ================= -->
+
 <div class="container my-5">
 
     <h2 class="text-center fw-bold mb-5">
-        Key Achievements in Leadership
+        Our Vision for Laikipia
     </h2>
 
     <div class="row g-4">
 
-        <!-- 1 -->
-        <div class="col-md-4" data-aos="zoom-in">
+        <!-- CARD 1 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/infrastructure.jpg' %}">
+
+                <img src="{% static 'projects/slide.jpg' %}" alt="Infrastructure Development">
+
                 <div class="p-3">
                     <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🏗 Infrastructure Development</h5>
-                    <p>Expansion of rural roads and introduction of innovative financing models including infrastructure bonds.</p>
+
+                    <h5>🏗 KILIMO BIASHARA (Agribusiness Transformation)</h5>
+
+                    <p>
+                        Transform Laikipia into a high-productivity agricultural powerhouse.
+
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
                 </div>
+
+              
+
             </div>
         </div>
 
-        <!-- 2 -->
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+        <!-- CARD 2 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/water.jpg' %}">
+
+                <img src="{% static 'projects/slide1.jpg' %}" alt="Access to Water">
+
                 <div class="p-3">
-                    <span class="badge bg-success mb-2">Completed</span>
-                    <h5>💧 Water Access Expansion</h5>
-                    <p>Implementation of major water projects including Solio and Makurian schemes improving rural water supply.</p>
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>💧 ACCESS TO WATER</h5>
+
+                    <p>
+                        Guarantee water security for people, agriculture, and industry.
+
+                    </p>
+                    <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
                 </div>
+
             </div>
         </div>
 
-        <!-- 3 -->
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+        <!-- CARD 3 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/education.jpg' %}">
+
+                <img src="{% static 'projects/slide2.jpg' %}" alt="Education">
+
                 <div class="p-3">
-                    <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🎓 Education Development</h5>
-                    <p>Establishment of secondary schools, youth polytechnics, and expansion of higher education access.</p>
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>💰 ENTERPRISE & BUSINESS DEVELOPMENT</h5>
+
+                    <p>
+                       Catalyze job creation, manufacturing, and entrepreneurship.
+                    </p>
+                    <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
                 </div>
+  
             </div>
         </div>
 
-        <!-- 4 -->
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+        <!-- CARD 4 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/economy.jpg' %}">
+
+                <img src="{% static 'projects/slide3.jpg' %}" alt="Business Development">
+
                 <div class="p-3">
-                    <span class="badge bg-success mb-2">Completed</span>
-                    <h5>💰 SME & Economic Growth</h5>
-                    <p>Promotion of SME financing programs, interest subsidies, and business development initiatives.</p>
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🏛 SMART TOWNS PROGRAM</h5>
+
+                    <p>
+                        Urban areas that attract talent, investment, and tourism.
+
+                    </p>
                 </div>
+  <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
             </div>
         </div>
 
-        <!-- 5 -->
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="400">
+        <!-- CARD 5 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/health.jpg' %}">
+
+                <img src="{% static 'projects/slide4.jpg' %}" alt="Healthcare">
+
                 <div class="p-3">
-                    <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🏥 Healthcare Improvement</h5>
-                    <p>Strengthening of healthcare systems and expansion of access to quality medical services.</p>
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🏛 PROPER GOVERNANCE & SERVICE DELIVERY</h5>
+
+                    <p>
+                       Build a transparent, accountable, and high-performing county.
+
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
                 </div>
+
             </div>
         </div>
 
-        <!-- 6 -->
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="500">
+        <!-- CARD 6 -->
+        <div class="col-md-4">
             <div class="premium-card">
-                <img src="{% static 'projects/governance.jpg' %}">
+
+                <img src="{% static 'projects/slide5.jpg' %}" alt="Governance">
+
                 <div class="p-3">
-                    <span class="badge bg-success mb-2">Completed</span>
-                    <h5>🏛 Governance & Reform</h5>
-                    <p>Public sector reforms, credit information systems, and financial market development initiatives.</p>
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🏥 AFFORDABLE AND ACCESSIBLE HEALTHCARE</h5>
+
+                    <p>
+                        A healthy population for a productive economy.
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
                 </div>
+
             </div>
         </div>
+
+        <!-- CARD 6 -->
+        <div class="col-md-4">
+            <div class="premium-card">
+
+                <img src="{% static 'projects/slide6.jpg' %}" alt="Governance">
+
+                <div class="p-3">
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🏛 EDUCATION & TRAINING</h5>
+
+                    <p>
+                        Unlock youth potential and drive the creative and digital economy.
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- CARD 6 -->
+        <div class="col-md-4">
+            <div class="premium-card">
+
+                <img src="{% static 'projects/slide8.jpg' %}" alt="Governance">
+
+                <div class="p-3">
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🏛 UPGRADING OF RURAL ROADS & BRIDGES</h5>
+
+                    <p>
+                        Open up production zones and enable seamless movement of goods and services.
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- CARD 6 -->
+        <div class="col-md-4">
+            <div class="premium-card">
+
+                <img src="{% static 'projects/slide7.jpg' %}" alt="Governance">
+
+                <div class="p-3">
+                    <span class="badge bg-success mb-2">Upcoming</span>
+
+                    <h5>🌍 DESTINATION LAIKIPIA</h5>
+
+                    <p>
+                        Showcase Laikipia as a global destination for tourism, conservation, and investment.
+                    </p>
+                      <a href="{% url 'about' %}"
+               class="btn btn-primary rounded-pill px-4 mt-3">
+                Learn More
+            </a>
+                </div>
+
+            </div>
+        </div>
+
 
     </div>
 
@@ -405,7 +590,7 @@
     height:90vh;
     background:
         linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-        url("{% static 'images/hero.jpg' %}");
+        url("{% static 'projects/heroo.jpg' %}");
     background-size:cover;
     background-position:center;
     position:relative;

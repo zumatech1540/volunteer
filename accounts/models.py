@@ -3,6 +3,11 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Sum
 
+
+
+
+from django.utils import timezone
+
 @property
 def category_summary(self):
     return self.expenses.values('category').annotate(
@@ -79,6 +84,8 @@ class CoordinatorProfile(models.Model):
 # CUSTOM USER MODEL
 # =====================================================
 
+
+
 class User(AbstractUser):
 
     ROLE_CHOICES = (
@@ -87,18 +94,29 @@ class User(AbstractUser):
         ('volunteer', 'Volunteer'),
     )
 
+    VOLUNTEER_ROLE_CHOICES = (
+        ('fundraising', 'Fundraising Support'),
+        ('door_to_door', 'Door-to-door Campaign'),
+        ('mobilising_voters', 'Mobilising Voters'),
+        ('social_media', 'Social Media Support'),
+        ('recruiting', 'Recruiting Volunteers'),
+        ('materials', 'Distributing Campaign Materials'),
+        ('data_collection', 'Data Collection'),
+        ('community_listening', 'Community Listening'),
+        ('barazas', 'Holding Barazas & Household Meetings'),
+        ('other', 'Other'),
+    )
+
+    # ================= BASIC =================
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
         default='volunteer'
     )
 
-    phone = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True
-    )
+    phone = models.CharField(max_length=20, blank=True, null=True)
 
+    # ================= LOCATION =================
     county = models.ForeignKey(
         'accounts.County',
         on_delete=models.SET_NULL,
@@ -120,15 +138,6 @@ class User(AbstractUser):
         blank=True
     )
 
-    managed_constituency = models.ForeignKey(
-        'accounts.Constituency',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='coordinators',
-        help_text='Only for coordinators'
-    )
-
     polling_station = models.ForeignKey(
         'accounts.PollingStation',
         on_delete=models.SET_NULL,
@@ -136,12 +145,37 @@ class User(AbstractUser):
         blank=True
     )
 
+    managed_constituency = models.ForeignKey(
+        'accounts.Constituency',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='coordinators'
+    )
+
+    # ================= NEW: VOLUNTEER INTEREST =================
+    volunteer_role = models.CharField(
+        max_length=50,
+        choices=VOLUNTEER_ROLE_CHOICES,
+        null=True,
+        blank=True
+    )
+
+    other_volunteer_role = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    # ================= OPTIONAL PROFILE CONTROL =================
+    is_profile_complete = models.BooleanField(default=False)
+
     def __str__(self):
         return self.username
-
 # =====================================================
 # EVENTS
 # =====================================================
+
 
 class Event(models.Model):
 
@@ -155,6 +189,13 @@ class Event(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=200)
     date = models.DateField()
+
+    # 🔥 ADD THIS (IMAGE FIX)
+    image = models.ImageField(
+        upload_to='events/',
+        null=True,
+        blank=True
+    )
 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -189,6 +230,17 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
+    # ================= AUTO STATUS SYSTEM =================
+    @property
+    def status(self):
+        today = timezone.now().date()
+
+        if self.date > today:
+            return "UPCOMING"
+        elif self.date == today:
+            return "LIVE"
+        else:
+            return "ENDED"
 
 # =====================================================
 # EVENT PARTICIPANTS
@@ -590,3 +642,41 @@ class GroundVoice(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class Gallery(models.Model):
+
+    MEDIA_TYPE = (
+        ('image', 'Image'),
+        ('video', 'Video'),
+    )
+
+    title = models.CharField(max_length=255)
+
+    media_type = models.CharField(
+        max_length=20,
+        choices=MEDIA_TYPE,
+        default='image'
+    )
+
+    image = models.ImageField(upload_to='gallery/', blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    uploaded_by = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    # ✅ ADD THIS FIELD
+    is_approved = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

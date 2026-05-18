@@ -1,84 +1,73 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
 
-    # AUTH
+    # ================= AUTH =================
     path('', views.home, name='home'),
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # DASHBOARDS
+    # ================= DASHBOARDS =================
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('leader-dashboard/', views.leader_dashboard, name='leader_dashboard'),
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
 
-    # PAGES
+    # ================= PAGES =================
     path('about/', views.about, name='about'),
     path('volunteers/', views.volunteers, name='volunteers'),
     path('events/', views.events, name='events'),
     path('contact/', views.contact, name='contact'),
-
-    # USERS / VOTERS
+    path('gallery/', views.gallery, name='gallery'),
+    path('upload/', views.upload_media, name='upload_media'),
+    # ================= USERS =================
     path('manage-users/', views.manage_users, name='manage_users'),
     path('voter-list/', views.voter_list, name='voter_list'),
     path('voter-analytics/', views.voter_analytics_dashboard, name='voter_analytics'),
     path('register-voter/', views.register_voter, name='register_voter'),
-    path('leader-charts/', views.voter_analytics_dashboard, name='leader_charts'),
 
-    # AJAX
+    # ================= AJAX =================
     path('ajax/constituencies/', views.load_constituencies, name='load_constituencies'),
     path('ajax/wards/', views.load_wards, name='load_wards'),
     path('ajax/polling/', views.load_polling_stations, name='load_polling'),
+    path(
+        'load-polling-stations/',
+        views.load_polling_stations,
+        name='load_polling_stations'
+    ),
 
-    # EVENTS
+    # ================= EVENTS =================
     path('create-event/', views.create_event, name='create_event'),
     path('leader-create-event/', views.leader_create_event, name='leader_create_event'),
     path('delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
-    # TASKS
+    path('join-event/<int:event_id>/', views.join_event, name='join_event'),
+
+    # ================= TASKS =================
     path('assign-task/', views.assign_task, name='assign_task'),
-    
     path('my-tasks/', views.my_tasks, name='my_tasks'),
 
-    # NOTIFICATIONS
+    # ================= NOTIFICATIONS =================
     path('notifications/', views.notifications, name='notifications'),
     path('bulk-sms/', views.bulk_sms, name='bulk_sms'),
     path('bulk-whatsapp/', views.bulk_whatsapp, name='bulk_whatsapp'),
 
-    # OPTIONAL MISSING ROUTES (FIX YOUR ERRORS)
+    # ================= ADMIN TOOLS =================
     path('admin-events-review/', views.events, name='admin_events_review'),
-
     path('download-users-excel/', views.admin_dashboard, name='download_users_excel'),
 
-    path('user-tasks/<int:user_id>/', views.my_tasks, name='user_tasks_admin'),
     path('make-admin/<int:user_id>/', views.make_admin, name='make_admin'),
-    
     path('make-volunteer/<int:user_id>/', views.make_volunteer, name='make_volunteer'),
+    path('make-coordinator/<int:user_id>/', views.make_coordinator, name='make_coordinator'),
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
-    path(
-    'leader-charts/',
-    views.voter_analytics_dashboard,
-    name='leader_charts'
-),
-    path(
-    'make-coordinator/<int:user_id>/',
-    views.make_coordinator,
-    name='make_coordinator'
-),
 
-    path(
-    "create-event-budget/",
-    views.create_event_budget,
-    name="create_event_budget"
-),
-     path("event-budgets/", views.event_budget_dashboard, name="event_budget_dashboard"),
-
+    # ================= BUDGET SYSTEM =================
     path("create-event-budget/", views.create_event_budget, name="create_event_budget"),
-    path('join-event/<int:event_id>/', views.join_event, name='join_event'),
-    path("add-expense/<int:budget_id>/", views.add_expense, name="add_expense"),
-    path('add-expense/<int:budget_id>/', views.add_expense, name='add_expense'),
     path("event-budgets/", views.event_budget_dashboard, name="event_budget_dashboard"),
+    path("add-expense/<int:budget_id>/", views.add_expense, name="add_expense"),
+
+    # ================= GROUND VOICE =================
     path('ground-voice/', views.submit_ground_voice, name='submit_ground_voice'),
     path('admin-ground-voice/', views.admin_ground_voice, name='admin_ground_voice'),
     path('resolve-ground-voice/<int:pk>/', views.resolve_ground_voice, name='resolve_ground_voice'),

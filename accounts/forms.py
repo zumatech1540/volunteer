@@ -1,12 +1,9 @@
 from django import forms
-from .models import Task, Event, Voter
-from .models import EventBudget
-from .models import User
+from .models import Task, Event, Voter, EventBudget, User
 
 
 # ================= TASK FORM =================
 class TaskForm(forms.ModelForm):
-
     class Meta:
         model = Task
         fields = [
@@ -22,7 +19,6 @@ class TaskForm(forms.ModelForm):
 
 # ================= EVENT FORM =================
 class EventForm(forms.ModelForm):
-
     class Meta:
         model = Event
         fields = ['title', 'description', 'location', 'date']
@@ -30,7 +26,6 @@ class EventForm(forms.ModelForm):
 
 # ================= VOTER FORM =================
 class VoterForm(forms.ModelForm):
-
     class Meta:
         model = Voter
         fields = [
@@ -45,8 +40,7 @@ class VoterForm(forms.ModelForm):
         ]
 
 
-
-
+# ================= REGISTER FORM =================
 class RegisterForm(forms.ModelForm):
 
     password1 = forms.CharField(widget=forms.PasswordInput)
@@ -69,13 +63,8 @@ class RegisterForm(forms.ModelForm):
         return cleaned
 
 
-
-
-
+# ================= EVENT BUDGET FORM =================
 class EventBudgetForm(forms.ModelForm):
     class Meta:
         model = EventBudget
-        fields = [
-            'event',
-            'total_budget'
-        ]
+        fields = ['event', 'total_budget']
