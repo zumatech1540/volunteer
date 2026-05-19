@@ -1,0 +1,233 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="achievement-hero text-white d-flex align-items-center">
+
+    <div class="container text-center">
+
+        <h1 class="display-3 fw-bold mb-4">
+            Key Achievements
+        </h1>
+
+        <p class="lead col-lg-8 mx-auto">
+            Delivering impactful programs, transformative projects,
+            and meaningful progress for the people of Laikipia.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ACHIEVEMENTS -->
+<div class="container py-5">
+
+    <div class="row g-4">
+
+        <!-- ACHIEVEMENT 1 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/cleanup.jpg' %}"
+                     class="achievement-image">
+
+                <div class="p-4">
+
+                    <span class="badge bg-success mb-3">
+                        Completed
+                    </span>
+
+                    <h4 class="fw-bold">
+                        🌱 Environmental Cleanup
+                    </h4>
+
+                    <p>
+                        Organized large-scale cleanup initiatives
+                        across towns and marketplaces to improve
+                        sanitation and environmental conservation.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACHIEVEMENT 2 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/economy.jpg' %}"
+                     class="achievement-image">
+
+                <div class="p-4">
+
+                    <span class="badge bg-primary mb-3">
+                        Economic Empowerment
+                    </span>
+
+                    <h4 class="fw-bold">
+                        💼 Youth & Business Support
+                    </h4>
+
+                    <p>
+                        Empowered youth groups and small businesses
+                        through training, mentorship, and economic initiatives.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACHIEVEMENT 3 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/governance.jpg' %}"
+                     class="achievement-image">
+
+                <div class="p-4">
+
+                    <span class="badge bg-warning text-dark mb-3">
+                        Leadership
+                    </span>
+
+                    <h4 class="fw-bold">
+                        🏛 Governance & Accountability
+                    </h4>
+
+                    <p>
+                        Strengthened public participation,
+                        transparency, and responsive leadership.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- STATS -->
+<section class="bg-light py-5 mt-5">
+
+    <div class="container">
+
+        <div class="row text-center">
+
+            <div class="col-md-3 mb-4">
+
+                <h1 class="fw-bold text-primary">
+                    50+
+                </h1>
+
+                <p>Community Projects</p>
+
+            </div>
+
+            <div class="col-md-3 mb-4">
+
+                <h1 class="fw-bold text-success">
+                    10K+
+                </h1>
+
+                <p>Citizens Reached</p>
+
+            </div>
+
+            <div class="col-md-3 mb-4">
+
+                <h1 class="fw-bold text-warning">
+                    100+
+                </h1>
+
+                <p>Youth Empowered</p>
+
+            </div>
+
+            <div class="col-md-3 mb-4">
+
+                <h1 class="fw-bold text-danger">
+                    20+
+                </h1>
+
+                <p>Programs Implemented</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<style>
+
+/* HERO */
+.achievement-hero {
+
+    min-height: 60vh;
+
+    background:
+        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+        url("{% static 'projects/heroo.jpg' %}");
+
+    background-size: cover;
+    background-position: center;
+}
+
+
+/* CARD */
+.achievement-card {
+
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+
+    transition: 0.4s ease;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.achievement-card:hover {
+
+    transform: translateY(-10px);
+
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+
+/* IMAGE */
+.achievement-image {
+
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+
+
+/* TEXT */
+.achievement-card p {
+
+    color: #555;
+    line-height: 1.7;
+}
+
+</style>
+
+{% endblock %}

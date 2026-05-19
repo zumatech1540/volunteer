@@ -21,7 +21,12 @@ urlpatterns = [
     path('events/', views.events, name='events'),
     path('contact/', views.contact, name='contact'),
     path('gallery/', views.gallery, name='gallery'),
-    path('upload/', views.upload_media, name='upload_media'),
+    path('gallery/', views.gallery, name='gallery'),
+    path('upload/', views.upload_gallery, name='upload_gallery'),
+    path('delete/<int:pk>/', views.delete_gallery, name='delete_gallery'),
+    path('vision/', views.vision, name='vision'),
+    path('achievements/', views.achievements, name='achievements'),
+    
     # ================= USERS =================
     path('manage-users/', views.manage_users, name='manage_users'),
     path('voter-list/', views.voter_list, name='voter_list'),

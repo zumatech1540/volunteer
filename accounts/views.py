@@ -261,12 +261,20 @@ def volunteers(request):
 
 def events(request):
     return render(request, 'accounts/events.html')
+def vision(request):
+    return render(request, 'accounts/vision.html')
+
+def achievements(request):
+    return render(request, 'accounts/achievements.html')
 
 def gallery(request):
     return render(request, 'accounts/gallery.html')
 
 def contact(request):
     return render(request, 'accounts/contact.html')
+
+def notifications(request):
+    return render(request, 'accounts/notifications.html')
 
 
 def gallery_view(request):
@@ -974,7 +982,7 @@ def complete_task(request, task_id):
 
 def notifications(request):
     notes = Notification.objects.filter(user=request.user)
-    return render(request, "notifications.html", {"notifications": notes})
+    return render(request, "accounts/notifications.html", {"notifications": notes})
 
 
 
@@ -1501,59 +1509,55 @@ def create_event_budget(request):
 
 
 # DISPLAY (ONLY APPROVED FOR VOLUNTEERS)
+from django.http import JsonResponse
+from .models import Gallery
+
+
 def gallery(request):
 
-    user_role = request.GET.get("role", "volunteer")
-
-    if user_role in ["admin", "coordinator"]:
-        items = Gallery.objects.all().order_by('-created_at')
-    else:
-        items = Gallery.objects.filter(is_approved=True).order_by('-created_at')
+    items = Gallery.objects.filter(is_approved=True)
 
     return render(request, 'accounts/gallery.html', {
-        'gallery_items': items,
-        'role': user_role
+        'gallery_items': items
     })
 
 
-# UPLOAD (ONLY ADMIN/COORDINATOR)
-def upload_media(request):
+def upload_gallery(request):
 
     if request.method == "POST":
 
-        role = request.POST.get("role")
+        user = request.user
+        role = getattr(user, "role", None)
 
-        print("ROLE:", role)  # DEBUG
-
+        # ONLY ADMIN + COORDINATOR
         if role not in ["admin", "coordinator"]:
-            return JsonResponse({
-                "success": False,
-                "message": "Permission denied"
-            })
+            return JsonResponse({"message": "Permission denied"}, status=403)
 
-        image = request.FILES.get('image')
-        video_url = request.POST.get('video_url')
+        image = request.FILES.get("image")
+        video_url = request.POST.get("video_url")
+        caption = request.POST.get("description")
 
         Gallery.objects.create(
             image=image,
             video_url=video_url,
+            description=caption,
+            uploaded_by=user,
             is_approved=True
         )
 
-        return JsonResponse({
-            "success": True,
-            "message": "Uploaded successfully"
-        })
+        return JsonResponse({"message": "Uploaded successfully"})
 
-# DELETE (ONLY ADMIN)
-def delete_media(request, id):
+    return JsonResponse({"message": "Invalid request"}, status=400)
 
-    role = request.GET.get("role")
 
-    if role != "admin":
-        return JsonResponse({"success": False, "message": "Only admin can delete"})
+def delete_gallery(request, pk):
 
-    item = get_object_or_404(Gallery, id=id)
-    item.delete()
+    user = request.user
+    role = getattr(user, "role", None)
 
-    return JsonResponse({"success": True})
+    if role not in ["admin", "coordinator"]:
+        return JsonResponse({"message": "Permission denied"}, status=403)
+
+    Gallery.objects.filter(id=pk).delete()
+
+    return JsonResponse({"message": "Deleted"})

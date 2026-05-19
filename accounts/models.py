@@ -651,17 +651,15 @@ class Gallery(models.Model):
         ('video', 'Video'),
     )
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null=True)
 
-    media_type = models.CharField(
-        max_length=20,
-        choices=MEDIA_TYPE,
-        default='image'
-    )
+    media_type = models.CharField(max_length=20, choices=MEDIA_TYPE, default='image')
 
     image = models.ImageField(upload_to='gallery/', blank=True, null=True)
+
     video_url = models.URLField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+
+    description = models.TextField(blank=True, null=True)  # caption
 
     uploaded_by = models.ForeignKey(
         'accounts.User',
@@ -670,13 +668,9 @@ class Gallery(models.Model):
         blank=True
     )
 
-    # ✅ ADD THIS FIELD
     is_approved = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-created_at']
-
-    def __str__(self):
-        return self.title
