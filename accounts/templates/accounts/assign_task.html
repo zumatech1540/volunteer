@@ -22,22 +22,36 @@
 
             <!-- TITLE -->
             <label class="form-label">Task Title</label>
-            <input type="text" name="title" class="form-control mb-3" placeholder="Enter task title" required>
+            <input type="text" name="title" class="form-control mb-3" required>
 
             <!-- DESCRIPTION -->
             <label class="form-label">Description</label>
-            <textarea name="description" class="form-control mb-3" rows="3" placeholder="Task details..."></textarea>
+            <textarea name="description" class="form-control mb-3" rows="3"></textarea>
 
-            <!-- ASSIGN TO -->
-            <label class="form-label">Assign To</label>
-            <select name="assigned_to" class="form-control mb-3" required>
-                <option value="">-- Select Volunteer or Leader --</option>
+            <!-- ASSIGN TO (MULTIPLE USERS / GROUPS) -->
+            <label class="form-label fw-bold">Assign To (Select One or Many)</label>
+
+            <div class="border rounded p-3 mb-3" style="max-height: 250px; overflow-y: auto;">
+
                 {% for v in volunteers %}
-                    <option value="{{ v.id }}">
-                        {{ v.first_name }} {{ v.last_name }} ({{ v.role }})
-                    </option>
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="assigned_to"
+                               value="{{ v.id }}"
+                               id="user{{ v.id }}">
+
+                        <label class="form-check-label" for="user{{ v.id }}">
+                            {{ v.first_name }} {{ v.last_name }} ({{ v.role }})
+                        </label>
+
+                    </div>
+
                 {% endfor %}
-            </select>
+
+            </div>
 
             <!-- EVENT -->
             <label class="form-label">Related Event</label>

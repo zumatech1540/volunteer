@@ -30,31 +30,31 @@
 .about-hero{
     position: relative;
     overflow: hidden;
-    border-radius: 35px;
-    padding: 120px 50px;
+    border-radius: 350px;
+    padding: 120px 300px;
     text-align: center;
-    color: #fff;
+    color: #04045f;
 
     background:
        
-        url("{% static 'projects/heroo.jpg' %}");
+        url("{% static 'projects/her.jpg' %}");
 
     background-size: cover;
     background-position: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    box-shadow: 0 20px 60px rgba(27, 2, 2, 0.18);
 }
 
 .about-hero h1{
     font-size: 58px;
     font-weight: 800;
-    margin-bottom: 20px;
+    margin-bottom: 3px;
 }
 
 .about-hero p{
-    font-size: 18px;
+    font-size: 20px;
     max-width: 900px;
     margin: auto;
-    color: rgba(255,255,255,0.85);
+    color: rgba(9, 10, 9, 0.85);
 }
 
 /* ================= CARD ================= */
@@ -124,11 +124,11 @@
 /* ================= RESPONSIVE ================= */
 @media(max-width:768px){
     .about-hero{
-        padding: 90px 25px;
+        padding: 110px 500px;
     }
 
     .about-hero h1{
-        font-size: 34px;
+        font-size: 100px;
     }
 }
 
@@ -140,18 +140,21 @@
 
     <div class="about-hero">
 
-        <h1> Building Hope, Delivering Change</h1>
+        <div class="about-content">
 
-        <p>
-            A seasoned economist, public policy leader, and former Governor of Laikipia
-            with over 35 years of experience in finance, governance, industrial development,
-            and transformative public service.
-        </p>
+            <h1>Building Hope, Delivering Change</h1>
+
+            <p>
+                A seasoned economist, public policy leader, and former Governor of Laikipia
+                with over 35 years of experience in finance, governance, industrial development,
+                and transformative public service.
+            </p>
+
+        </div>
 
     </div>
 
 </div>
-
 
 <!-- ================= FULL BIO ================= -->
 <div class="container section-container">
@@ -226,103 +229,348 @@
 </div>
 
 
-<!-- ================= KEY ACHIEVEMENTS ================= -->
-<div class="container section-container">
+{% load static %}
 
-    <h2 class="section-title">Key Achievements</h2>
+<!-- ================= PHOTOS OF PROGRESS ================= -->
+<div class="container py-5">
 
-    <p class="section-subtitle">
-        Major contributions in governance, infrastructure, finance, education, healthcare, and peace-building.
-    </p>
+    <!-- SECTION TITLE -->
+    <div class="text-center mb-5">
 
+        <h2 class="fw-bold display-5">
+            Photos of Progress: A Journey of Impact and Leadership
+        </h2>
+
+        <p class="text-muted fs-5">
+            Major contributions in governance, infrastructure,
+            finance, education, healthcare, and peace-building.
+        </p>
+
+    </div>
+
+    <!-- ACHIEVEMENTS GRID -->
     <div class="row g-4">
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🏗 Infrastructure Innovation</div>
-                <div class="ach-text">
-                    Introduced leasing models and pioneered infrastructure bond financing for county development.
+        <!-- CARD 1 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet1.jpg' %}"
+                     class="achievement-image"
+                     alt="Infrastructure">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-primary mb-3">
+                        Infrastructure
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🏗 Infrastructure Innovation
+                    </h4>
+
+                    <p class="achievement-text">
+                        Introduced leasing models and pioneered
+                        infrastructure bond financing for county development.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🏙 Smart Towns Program</div>
-                <div class="ach-text">
-                    Modernized urban planning and improved investment readiness across Laikipia County.
+        <!-- CARD 2 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet2.jpg' %}"
+                     class="achievement-image"
+                     alt="Smart Towns">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-success mb-3">
+                        Urban Development
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🏙 Smart Towns Program
+                    </h4>
+
+                    <p class="achievement-text">
+                        Modernized urban planning and improved investment
+                        readiness across Laikipia County.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">💰 SME Development</div>
-                <div class="ach-text">
-                    Introduced rebate programs, interest subsidies, and SME financing partnerships with KCB.
+        <!-- CARD 3 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet3.jpg' %}"
+                     class="achievement-image"
+                     alt="SME Development">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-warning text-dark mb-3">
+                        Business
+                    </span>
+
+                    <h4 class="achievement-title">
+                        💰 SME Development
+                    </h4>
+
+                    <p class="achievement-text">
+                        Introduced rebate programs, interest subsidies,
+                        and SME financing partnerships with KCB.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🏥 Healthcare Expansion</div>
-                <div class="ach-text">
-                    Improved healthcare systems and expanded access to quality medical services countywide.
+        <!-- CARD 4 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet4.jpg' %}"
+                     class="achievement-image"
+                     alt="Healthcare">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-danger mb-3">
+                        Healthcare
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🏥 Healthcare Expansion
+                    </h4>
+
+                    <p class="achievement-text">
+                        Improved healthcare systems and expanded access
+                        to quality medical services countywide.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">💧 Water Projects</div>
-                <div class="ach-text">
-                    Delivered Solio and Makurian water projects extending clean water to remote communities.
+        <!-- CARD 5 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet5.jpg' %}"
+                     class="achievement-image"
+                     alt="Water Projects">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-info text-dark mb-3">
+                        Water
+                    </span>
+
+                    <h4 class="achievement-title">
+                        💧 Water Projects
+                    </h4>
+
+                    <p class="achievement-text">
+                        Delivered Solio and Makurian water projects
+                        extending clean water to remote communities.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🎓 Education Expansion</div>
-                <div class="ach-text">
-                    Established 23 secondary schools, 3 youth polytechnics, and a university in Laikipia West.
+        <!-- CARD 6 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet6.jpg' %}"
+                     class="achievement-image"
+                     alt="Education">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-secondary mb-3">
+                        Education
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🎓 Education Expansion
+                    </h4>
+
+                    <p class="achievement-text">
+                        Established 23 secondary schools,
+                        3 youth polytechnics, and a university
+                        in Laikipia West.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">⚖️ Governance Reform</div>
-                <div class="ach-text">
-                    Advocated credit information sharing laws and SME-friendly financial regulations.
+        <!-- CARD 7 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet4.jpg' %}"
+                     class="achievement-image"
+                     alt="Governance">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-dark mb-3">
+                        Governance
+                    </span>
+
+                    <h4 class="achievement-title">
+                        ⚖️ Governance Reform
+                    </h4>
+
+                    <p class="achievement-text">
+                        Advocated credit information sharing laws
+                        and SME-friendly financial regulations.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🤝 Peace Building</div>
-                <div class="ach-text">
-                    Led Laikipia Peace Caravan across 32 districts reducing inter-community conflicts.
+        <!-- CARD 8 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet5.jpg' %}"
+                     class="achievement-image"
+                     alt="Peace Building">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-success mb-3">
+                        Peace Building
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🤝 Peace Building
+                    </h4>
+
+                    <p class="achievement-text">
+                        Led Laikipia Peace Caravan across
+                        32 districts reducing inter-community conflicts.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="ach-card">
-                <div class="ach-title">🌍 IFC Experience</div>
-                <div class="ach-text">
-                    Designed financial systems across Africa including credit bureaus and SME banking reforms.
+        <!-- CARD 9 -->
+        <div class="col-lg-4 col-md-6">
+
+            <div class="achievement-card h-100">
+
+                <img src="{% static 'projects/meet6.jpg' %}"
+                     class="achievement-image"
+                     alt="IFC Experience">
+
+                <div class="achievement-content">
+
+                    <span class="badge bg-primary mb-3">
+                        International Experience
+                    </span>
+
+                    <h4 class="achievement-title">
+                        🌍 IFC Experience
+                    </h4>
+
+                    <p class="achievement-text">
+                        Designed financial systems across Africa
+                        including credit bureaus and SME banking reforms.
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
     </div>
 
 </div>
 
+<!-- ================= STYLES ================= -->
+<style>
 
+.section-container{
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.achievement-card{
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    height: 100%;
+}
+
+.achievement-card:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+}
+
+.achievement-image{
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.achievement-content{
+    padding: 25px;
+}
+
+.achievement-title{
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+.achievement-text{
+    color: #555;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+</style>
 <!-- ================= STATS ================= -->
 <div class="container section-container">
 
@@ -374,9 +622,10 @@
 
         <a href="{% url 'submit_ground_voice' %}"
            class="btn btn-light btn-lg mt-3 px-5">
-            📢 Submit Ground Voice
+            📢 Ground Inasemaje!
+            <b>Click here</b> <br>to send Feedback, grievances, report issues, and raise concerns directly from the community.
         </a>
-
+          
     </div>
 
 </div>

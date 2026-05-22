@@ -823,32 +823,53 @@ def make_volunteer(request, user_id):
 
     return redirect("manage_users")
 
+
 @login_required
 @admin_required
 def assign_task(request):
 
-    form = TaskForm()
-
     if request.method == "POST":
-        form = TaskForm(request.POST)
 
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.assigned_by = request.user
-            task.save()
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        event_id = request.POST.get('event')
+        priority = request.POST.get('priority')
+        due_date = request.POST.get('due_date')
 
-            # 🔔 NOTIFICATION (MUST BE INSIDE FUNCTION)
+        # 👇 MULTIPLE USERS (checkboxes)
+        users_ids = request.POST.getlist('assigned_to')
+        users = User.objects.filter(id__in=users_ids)
+
+        # ⚠️ Create task first (NO assigned_to yet)
+        task = Task.objects.create(
+            title=title,
+            description=description,
+            event_id=event_id if event_id else None,
+            priority=priority,
+            due_date=due_date,
+            assigned_by=request.user
+        )
+
+        # 👇 Attach users to ManyToMany field
+        task.assigned_to.set(users)
+
+        # 🔔 Notifications for each user
+        for user in users:
             create_notification(
-                user=task.assigned_to,
+                user=user,
                 title="New Task Assigned",
                 message=f"You have been assigned: {task.title}",
                 notification_type="task_assigned",
                 task=task
             )
 
-            return redirect('admin_dashboard')
+        return redirect('admin_dashboard')
 
-    return render(request, 'accounts/assign_task.html', {'form': form})
+    # optional (recommended if you use volunteers/events in template)
+    return render(request, 'accounts/assign_task.html', {
+        'volunteers': User.objects.all(),
+        'events': Event.objects.all()
+    })
 
 @login_required
 def my_tasks(request):

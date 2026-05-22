@@ -52,6 +52,11 @@ urlpatterns = [
     # ================= TASKS =================
     path('assign-task/', views.assign_task, name='assign_task'),
     path('my-tasks/', views.my_tasks, name='my_tasks'),
+    path(
+    'assign-task/<int:user_id>/',
+    views.assign_task,
+    name='assign_task'
+),
 
     # ================= NOTIFICATIONS =================
     path('notifications/', views.notifications, name='notifications'),

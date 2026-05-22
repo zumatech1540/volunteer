@@ -7,35 +7,31 @@
 <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
 <!-- ================= HERO SECTION ================= -->
-<div class="hero-premium d-flex align-items-center position-relative"
-     style="background: url('{% static 'projects/home.jpg' %}') center/cover no-repeat; min-height:90vh;">
-    
+<div class="hero-premium d-flex align-items-center position-relative">
 
     <!-- BACKGROUND OVERLAY -->
     <div class="hero-overlay"></div>
 
-    <div class="container text-center text-red position-relative">
+    <div class="container text-center text-white position-relative">
 
         <h1 class="hero-title fw-bold display-4" data-aos="fade-up">
-            I Stand for Laikipia. I Support Ndiritu
+            Transforming Laikipia Through Action
         </h1>
 
         <p class="hero-subtitle lead mt-3" data-aos="fade-up" data-aos-delay="200">
-            Economist | Former Governor | Public Policy Expert | Development Advocate
-       
+            I Stand for Laikipia. I Support Ndiritu
+        </p>
 
         <!-- ACTION BUTTONS -->
         <div class="mt-4" data-aos="fade-up" data-aos-delay="400">
 
             {% if not request.user.is_authenticated %}
 
-                <a href="{% url 'register' %}"
-                   class="btn btn-light btn-lg px-4 me-2 rounded-pill">
-                    Join Movement
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 me-2 rounded-pill">
+                    Join The Movement
                 </a>
 
-                <a href="{% url 'login' %}"
-                   class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
                     Sign In
                 </a>
 
@@ -43,22 +39,19 @@
 
                 {% if request.user.is_superuser or request.user.role == "admin" %}
 
-                    <a href="{% url 'admin_dashboard' %}"
-                       class="btn btn-warning btn-lg px-4 rounded-pill">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-warning btn-lg px-4 rounded-pill">
                         Admin Dashboard
                     </a>
 
                 {% elif request.user.role == "leader" %}
 
-                    <a href="{% url 'leader_dashboard' %}"
-                       class="btn btn-warning btn-lg px-4 rounded-pill">
+                    <a href="{% url 'leader_dashboard' %}" class="btn btn-warning btn-lg px-4 rounded-pill">
                         Leader Dashboard
                     </a>
 
                 {% else %}
 
-                    <a href="{% url 'volunteer_dashboard' %}"
-                       class="btn btn-warning btn-lg px-4 rounded-pill">
+                    <a href="{% url 'volunteer_dashboard' %}" class="btn btn-warning btn-lg px-4 rounded-pill">
                         Citizen Dashboard
                     </a>
 
@@ -137,7 +130,7 @@
         <div class="col-md-6" data-aos="fade-left">
 
             <h2 class="fw-bold mb-3">
-                Candidate Story: Hon. Ndiritu Muriithi
+                Why Ndiritu Muriithi?
             </h2>
 
             <p class="text-muted">
@@ -443,78 +436,194 @@
 
 
 <!-- ================= IMPACT SECTION ================= -->
-<div class="impact-premium">
+<div class="impact-premium py-5">
 
     <div class="container">
 
+        <!-- SECTION HEADER -->
         <div class="text-center text-white mb-5">
-            <h2 class="fw-bold">Development Impact & Delivery</h2>
-            <p>
-                Key measurable outcomes from leadership, governance reforms,
-                and development programs across Laikipia and beyond.
+
+            <h2 class="fw-bold display-5">
+                Transforming Lives Through Action
+            </h2>
+
+            <p class="lead">
+                Real measurable progress in infrastructure, education,
+                youth empowerment, economic growth, and community development
+                across Laikipia County.
             </p>
+
         </div>
 
+        <!-- IMPACT GRID -->
         <div class="row g-4 text-center">
 
-            <!-- Wards / Communities -->
-            <div class="col-md-4" data-aos="fade-up">
+            <!-- VOLUNTEERS -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+
                 <div class="impact-card">
 
                     <div class="impact-icon">
-                        🏘️
+                        👥
                     </div>
 
-                    <h1 class="counter" data-target="32">0</h1>
+                    <h1 class="counter" data-target="5000">
+                        0
+                    </h1>
 
-                    <h5>Administrative Areas Reached</h5>
+                    <h5>
+                        5000+ Volunteers Across Laikipia
+                    </h5>
 
                     <p>
-                        Development programs implemented across wards and rural settlements
-                        improving service delivery and inclusion.
+                        Mobilized and empowered a strong volunteer movement
+                        supporting grassroots development, civic engagement,
+                        and community transformation.
                     </p>
 
                 </div>
+
             </div>
 
-            <!-- Infrastructure -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
+            <!-- ROADS -->
+            <div class="col-lg-4 col-md-6"
+                 data-aos="fade-up"
+                 data-aos-delay="100">
+
                 <div class="impact-card">
 
                     <div class="impact-icon">
-                        🏗️
+                        🛣️
                     </div>
 
-                    <h1 class="counter" data-target="150">0</h1>
+                    <h1 class="counter" data-target="3000">
+                        0
+                    </h1>
 
-                    <h5>Infrastructure Projects</h5>
+                    <h5>
+                        3000+ Roads Graded & Gravelled
+                    </h5>
 
                     <p>
-                        Roads, water systems, schools, and public facilities developed
-                        through innovative financing and planning models.
+                        Improved connectivity and opened up rural
+                        production zones through major road grading
+                        and graveling programs.
                     </p>
 
                 </div>
+
             </div>
 
-            <!-- Development Programs -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <!-- SMART TOWNS -->
+            <div class="col-lg-4 col-md-6"
+                 data-aos="fade-up"
+                 data-aos-delay="200">
+
                 <div class="impact-card">
 
                     <div class="impact-icon">
-                        📊
+                        🏙️
                     </div>
 
-                    <h1 class="counter" data-target="45">0</h1>
+                    <h1 class="counter" data-target="12">
+                        0
+                    </h1>
 
-                    <h5>Development Programs</h5>
+                    <h5>
+                        12 Smart Towns Developed
+                    </h5>
 
                     <p>
-                        Ongoing and completed initiatives in water, SMEs,
-                        healthcare, education, and economic empowerment.
+                        Modernized urban centers through strategic planning,
+                        infrastructure expansion, and investment-friendly
+                        development initiatives.
                     </p>
 
                 </div>
+
+            </div>
+
+            <!-- SCHOOLS -->
+            <div class="col-lg-4 col-md-6"
+                 data-aos="fade-up">
+
+                <div class="impact-card">
+
+                    <div class="impact-icon">
+                        🎓
+                    </div>
+
+                    <h1 class="counter" data-target="23">
+                        0
+                    </h1>
+
+                    <h5>
+                        23 New Secondary Schools
+                    </h5>
+
+                    <p>
+                        Expanded access to quality education by establishing
+                        new learning institutions across underserved regions.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- EDUCATION BENEFICIARIES -->
+            <div class="col-lg-4 col-md-6"
+                 data-aos="fade-up"
+                 data-aos-delay="100">
+
+                <div class="impact-card">
+
+                    <div class="impact-icon">
+                        📚
+                    </div>
+
+                    <h1 class="counter" data-target="50000">
+                        0
+                    </h1>
+
+                    <h5>
+                        50,000+ Education Beneficiaries
+                    </h5>
+
+                    <p>
+                        Thousands of students supported through school expansion,
+                        bursaries, training programs, and educational empowerment.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- JOBS -->
+            <div class="col-lg-4 col-md-6"
+                 data-aos="fade-up"
+                 data-aos-delay="200">
+
+                <div class="impact-card">
+
+                    <div class="impact-icon">
+                        💼
+                    </div>
+
+                    <h1 class="counter" data-target="18000">
+                        0
+                    </h1>
+
+                    <h5>
+                        18,000+ Jobs Created
+                    </h5>
+
+                    <p>
+                        Stimulated economic growth through SME support,
+                        investment attraction, agribusiness, and enterprise development.
+                    </p>
+
+                </div>
+
             </div>
 
         </div>
@@ -522,7 +631,6 @@
     </div>
 
 </div>
-
 
 <!-- ================= CTA SECTION ================= -->
 <div class="container my-5">
@@ -543,7 +651,7 @@
            target="_blank"
            class="btn btn-success btn-lg rounded-pill px-5 mb-4 shadow">
 
-            📲 Join Movement!
+            📲 Join Our Whatsapp Group
 
         </a>
 
@@ -561,11 +669,12 @@
                          style="background: rgba(10, 212, 90, 0.15); backdrop-filter: blur(10px); color: white;">
 
                         <h3 class="fw-bold mb-2">
-                            📢 Ground Voice
+                            📢 Ground Inasemaje!
                         </h3>
 
                         <p class="mb-0" style="opacity: 0.9;">
-                            Send grievances, report issues, and raise concerns directly from the community.
+                            <b>Click here</b> <br>to send Feedback, grievances, report issues, and raise concerns directly from the community.
+                            
                         </p>
 
                     </div>
@@ -587,13 +696,20 @@
 
 /* HERO */
 .hero-premium{
-    height:90vh;
+    height: 90vh;
+    min-height: 600px;
+
     background:
-        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-        url("{% static 'projects/heroo.jpg' %}");
-    background-size:cover;
-    background-position:center;
-    position:relative;
+        
+        url("{% static 'projects/her.jpg' %}");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .hero-overlay{

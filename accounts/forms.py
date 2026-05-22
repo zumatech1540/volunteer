@@ -2,8 +2,37 @@ from django import forms
 from .models import Task, Event, Voter, EventBudget, User
 
 
-# ================= TASK FORM =================
+
+
 class TaskForm(forms.ModelForm):
+
+    assigned_to = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple()
+    )
+
+    class Meta:
+        model = Task
+        fields = [
+            'title',
+            'description',
+            'assigned_to',
+            'event',
+            'priority',
+            'due_date',
+            'status'
+        ]
+
+# ================= TASK FORM =================
+
+
+class TaskForm(forms.ModelForm):
+
+    assigned_to = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Task
         fields = [

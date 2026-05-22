@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Voluntee - Community Platform</title>
+    <title>Ndiritu Muriithi Platform</title>
 
     <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,11 @@
 
 
   
-
+        .navbar-logo {
+    width: 35px;      /* make it small */
+    height: 35px;     /* keeps it square */
+    object-fit: contain;
+}
 
         .hero-overlay{
     position:absolute;
@@ -310,27 +314,35 @@
     <div class="container">
 
         <!-- LOGO -->
-        <a class="navbar-brand"
-           href="{% if request.user.is_authenticated %}
+        <a class="navbar-brand d-flex flex-column align-items-center text-center"
+   href="{% if request.user.is_authenticated %}
 
-                    {% if request.user.is_superuser or request.user.role == 'admin' %}
-                        {% url 'admin_dashboard' %}
+            {% if request.user.is_superuser or request.user.role == 'admin' %}
+                {% url 'admin_dashboard' %}
 
-                    {% elif request.user.role == 'leader' %}
-                        {% url 'leader_dashboard' %}
+            {% elif request.user.role == 'leader' %}
+                {% url 'leader_dashboard' %}
 
-                    {% else %}
-                        {% url 'volunteer_dashboard' %}
+            {% else %}
+                {% url 'volunteer_dashboard' %}
 
-                    {% endif %}
+            {% endif %}
 
-                 {% else %}
-                    {% url 'home' %}
-                 {% endif %}">
+         {% else %}
+            {% url 'home' %}
+         {% endif %}">
 
-            🌍 <span> I stand for Laikipia</span>
+    <!-- LOGO -->
+    <img src="{% static 'projects/log.jpg' %}"
+         alt="Logo"
+         class="navbar-logo">
 
-        </a>
+    <!-- TEXT -->
+    <div class="brand-text">
+        I Stand For Laikipia
+    </div>
+
+</a>
 
         <!-- TOGGLER -->
         <button class="navbar-toggler"
@@ -353,11 +365,11 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About Our Candidate</a>
+                    <a class="nav-link" href="{% url 'about' %}">About Ndiritu Muriithi</a>
                 </li>
                 <li class="nav-item">
     <a class="nav-link" href="{% url 'vision' %}">
-        Vision
+       Our Visions
     </a>
 </li>
 <li class="nav-item">
@@ -631,7 +643,7 @@
 
                 <p class="footer-text mb-2">
                     <i class="fa fa-envelope"></i>
-                    info@IsupportNdiritu.org
+                    info@isupportNdiritu.org
                 </p>
 
                 <p class="footer-text mb-2">
