@@ -3,7 +3,7 @@ from accounts.models import County, Constituency, Ward, PollingStation
 
 
 class Command(BaseCommand):
-    help = "Seed Laikipia County location data (clean + safe + idempotent)"
+    help = "Seed Laikipia County location data (production-safe & idempotent)"
 
     def handle(self, *args, **kwargs):
 
@@ -12,233 +12,430 @@ class Command(BaseCommand):
         # ================= COUNTY =================
         county, _ = County.objects.get_or_create(name="Laikipia")
 
-        # =====================================================
-        # CONSTITUENCIES
-        # =====================================================
+        # ================= CONSTITUENCIES =================
         east, _ = Constituency.objects.get_or_create(name="Laikipia East", county=county)
         north, _ = Constituency.objects.get_or_create(name="Laikipia North", county=county)
         west, _ = Constituency.objects.get_or_create(name="Laikipia West", county=county)
 
         # =====================================================
-        # ================= LAIKIPIA EAST ====================
+        # ================= LAIKIPIA EAST =====================
         # =====================================================
 
-        nanyuki, _ = Ward.objects.get_or_create(name="Nanyuki Ward", constituency=east)
-        tigithi, _ = Ward.objects.get_or_create(name="Tigithi Ward", constituency=east)
-        thingithu, _ = Ward.objects.get_or_create(name="Thingithu Ward", constituency=east)
-        ngobit, _ = Ward.objects.get_or_create(name="Ngobit Ward", constituency=east)
-        umande, _ = Ward.objects.get_or_create(name="Umande Ward", constituency=east)
+        wards_east = {
+            "Ngobit Ward": [
+                "OLTAFFETA PRIMARY SCHOOL",
+                "SIRIMA PRIMARY SCHOOL",
+                "GITHIRA PRIMARY SCHOOL",
+                "KIJABE PRIMARY SCHOOL",
+                "WITHARE PRIMARY SCHOOL",
+                "MWITURIA PRIMARY SCHOOL",
+                "MUNYAKA PRIMARY SCHOOL",
+                "KARUNGU PRIMARY SCHOOL",
+                "MUHONIA PRIMARY SCHOOL",
+                "MWIRERI PRIMARY SCHOOL",
+                "KARIGU-INI PRIMARY SCHOOL",
+                "NGOBIT PRIMARY SCHOOL",
+                "WAMURA PRIMARY SCHOOL",
+                "RUTUNGURU PRIMARY SCHOOL",
+                "RUAI PRIMARY SCHOOL",
+                "NYAMBUGICHI PRIMARY SCHOOL",
+                "WIYUMIRIRIE YOUTH POLY",
+                "WIYUMIRIRIE PRIMARY SCHOOL",
+                "MATHENYA PRIMARY SCHOOL",
+                "METHA PRIMARY SCHOOL",
+                "SUGUROI PRIMARY SCHOOL",
+                "NGOBIT POLICE STATION",
+                "BAHATI PRIMARY SCHOOL",
+                "SOUTH IMENTI PRIMARY SCHOOL",
+                "MWIHOKO PRIMARY SCHOOL",
+                "SHALOM PRIMARY SCHOOL GROUND",
+                "MUTARO PRIMARY SCHOOL",
+                "SHALOM DISPENSARY",
+                "NAITOROSHI PRIMARY SCHOOL",
+            ],
+            "Tigithi Ward": [
+                "CHUMA PRIMARY SCHOOL",
+                "MUKURI PRIMARY SCHOOL",
+                "TIGITHI PRIMARY SCHOOL",
+                "MATHINGIRA PRIMARY SCHOOL",
+                "MUKADAMIA PRIMARY SCHOOL",
+                "WERU-INI PRIMARY SCHOOL",
+                "MITEERO PRIMARY SCHOOL",
+                "LECHUGU PRIMARY SCHOOL",
+                "MALE PRIMARY SCHOOL",
+                "KIHATO PRIMARY SCHOOL",
+                "RIACHUI PRIMARY SCHOOL",
+                "THARUA PRIMARY SCHOOL",
+                "NYAKIO PRIMARY SCHOOL",
+                "BAHATI DEB SOLIO PRIMARY SCHOOL",
+                "TETU PRIMARY SCHOOL SOLIO",
+                "KIBUBUNGI PRIMARY SCHOOL",
+                "WATHITUGA PRIMARY SCHOOL",
+                "MWIYOGO PRIMARY SCHOOL",
+                "KIAMBIRIRIA PRIMARY SCHOOL",
+                "SOLIO SOCIAL HALL",
+                "DEB SOLIO RANCH PRIMARY SCHOOL",
+                "BARAKA DEB SOLIO PRIMARY SCHOOL",
+                "KAMANGURA NURSERY SCHOOL",
+                "IRIUKU PRIMARY SCHOOL",
+                "FURAHA PRIMARY SCHOOL",
+                "MOTHER TERESA PRIMARY SCHOOL",
+                "KARAI PRIMARY SCHOOL",
+                "WAGUTHIRU ECD NURSERY SCHOOL",
+            ],
+            "Thingithu Ward": [
+                "RAILWAY CLUB",
+                "BUNGOMA PRIMARY SCHOOL",
+                "NDURURI PRIMARY SCHOOL",
+                "NANYUKI D.E.B PRIMARY SCHOOL",
+                "THINGITHU PRIMARY SCHOOL",
+                "LAIKIPIA AIR BASE PRIMARY SCHOOL",
+                "NJOGUINI PRIMARY SCHOOL",
+                "MATANYA PRIMARY SCHOOL",
+                "SWEETWATERS PRIMARY SCHOOL",
+                "MIRERA PRIMARY SCHOOL",
+                "BARAKA DISPENSARY (MUNG'ETHO)",
+                "ST LOISE GIRLS SECONDARY SCHOOL",
+                "BARAKA APS LINE (MUNG'ETHO)",
+                "AIC NANYUKI NURSERY",
+                "NANYUKI POLYTECHNIC",
+                "NANYUKI SOCIAL HALL",
+                "TEMMAKIS PRIMARY SCHOOL",
+            ],
+            "Nanyuki Ward": [
+                "LIKII PRIMARY SCHOOL",
+                "LIKII SOCIAL HALL",
+                "LIKII NURSERY SCHOOL",
+                "NKANDO PRIMARY SCHOOL",
+                "NANYUKI PRIMARY SCHOOL",
+                "NTURUKUMA PRIMARY SCHOOL",
+                "MT. KENYA PRIMARY SCHOOL",
+                "NANYUKI GARRISON PRIMARY SCHOOL",
+                "KANYONI NURSERY SCHOOL",
+                "MUTHAIGA PRIMARY SCHOOL",
+                "CENTRAL PARK (KANU GROUND)",
+                "ST. MOSES PRIMARY SCHOOL",
+                "NANYUKI APS LINE GROUND",
+                "ST. JUDE GIRLS SECONDARY SCHOOL",
+                "NANYUKI HIGH SCHOOL",
+                "NTURUKUMA KENYA FIBRE",
+            ],
+            "Umande Ward": [
+                "NYARIGINU PRIMARY SCHOOL",
+                "MURUNGAI PRIMARY SCHOOL",
+                "KALALU PRIMARY SCHOOL",
+                "KALALU SECONDARY SCHOOL",
+                "NDEMU PRIMARY SCHOOL",
+                "MUGUMO PRIMARY SCHOOL",
+                "TETU PRIMARY SCHOOL",
+                "BINGWA PRIMARY SCHOOL",
+                "LOLDAIGA FARM HOUSE",
+                "GAKEU PRIMARY SCHOOL",
+                "KALALU SOCIAL HALL",
+                "UMANDE PRIMARY SCHOOL",
+                "DAIGA PRIMARY SCHOOL",
+            ],
+        }
 
-        PollingStation.objects.get_or_create(name="Nanyuki Primary School", ward=nanyuki)
-        PollingStation.objects.get_or_create(name="Likii Market Center", ward=nanyuki)
-        PollingStation.objects.get_or_create(name="Nanyuki High School", ward=nanyuki)
-
-        PollingStation.objects.get_or_create(name="Tigithi Market Center", ward=tigithi)
-        PollingStation.objects.get_or_create(name="Kiamariga Centre", ward=tigithi)
-
-        PollingStation.objects.get_or_create(name="Thome Community Hall", ward=thingithu)
+        for ward_name, stations in wards_east.items():
+            ward, _ = Ward.objects.get_or_create(name=ward_name, constituency=east)
+            for name in stations:
+                PollingStation.objects.get_or_create(name=name, ward=ward)
 
         # =====================================================
         # ================= LAIKIPIA NORTH ====================
         # =====================================================
 
-        mukogodo_east, _ = Ward.objects.get_or_create(name="Mukogodo East Ward", constituency=north)
-        mukogodo_west, _ = Ward.objects.get_or_create(name="Mukogodo West Ward", constituency=north)
-        myaka, _ = Ward.objects.get_or_create(name="Segera Ward", constituency=north)
-        sosian, _ = Ward.objects.get_or_create(name="Sosian Ward", constituency=north)
+        wards_north = {
+            "Sosian Ward": [
+                "Rabal Nursery School",
+                "Mugie Primary School",
+                "Luoniek Primary School",
+                "Magadi Primary School",
+                "Posta A.P. Post",
+                "Ndunyu Primary School",
+                "Mbombo Primary School",
+                "Colcheccio Farm House",
+                "Kirimon LMD Office",
+                "Morinjo Nursery School",
+                "Olmaisor Primary School",
+                "Tingamara A.P. Post",
+                "Mathanji Primary School",
+                "Ngaremare Primary School",
+                "Mathenge Farm",
+                "Naibor Amani Primary School",
+                "Island Primary School",
+                "Survey Primary School",
+                "Narok Primary School",
+                "Nakwang Nursery School",
+                "Mirango Primary School",
+                "Ndonyoriwo Primary School",
+                "Suyian Ranch",
+                "Kahuho Primary School",
+                "Minjore Primary School",
+                "Githima Primary School",
+                "Mithuri Primary School",
+                "Mutarakwa Primary School",
+                "Olmutunyi Primary School",
+                "Merigwit Primary School",
+                "Marura Narok Primary School",
+                "Kanjul Primary School",
+                "Dam Mbili Primary School",
+                "Lera Primary School",
+                "Nkirashi Primary School",
+            ],
+            "Segera Ward": [
+                "Oljogi Primary School",
+                "Olgirgir Primary School",
+                "Lailagwan Primary School",
+                "Muramati Primary School",
+                "Mukima Primary School",
+                "Impala Farm House",
+                "Mukenya Farm House",
+                "Kabarak Farm House",
+                "Uasonyiro Primary School",
+                "Naibor Primary School",
+                "Endana Primary School",
+                "Ereri Primary School",
+                "Lekiji Primary School",
+                "Mutirithia Primary School",
+                "Reteti Primary School",
+                "Segera Main Gate",
+                "Tinka Nyeusi Nursery",
+                "Irura Primary School",
+            ],
+            "Mukogodo West Ward": [
+                "Ewaso Primary School",
+                "Olmunishoi Primary School",
+                "Salt Lick Livestock Centre",
+                "Naiperere Primary School",
+                "Ilmotiok Primary School",
+                "Tura Junction Field",
+                "Ng'abolo Primary School",
+                "Kimanjo Primary School",
+                "Musul Primary School",
+                "Soito Oltashe Nursery School",
+                "Picha Nursery School",
+                "Ilpolei Primary School",
+                "Saramba Primary School",
+                "Seek Primary School",
+                "Emulango Baptist Nursery School",
+                "Nosirai Trading Centre",
+                "Tiamamut Nursery School",
+                "Tor Nursery School",
+                "Oloshaki Nursery School",
+                "Soitoudo Primary School",
+                "Njurum Nursery School",
+                "Kurum Primary School",
+                "Ngiririt Primary School",
+            ],
+            "Mukogodo East Ward": [
+                "Lukosero Primary School",
+                "Kiwanja ya Ndege Primary School",
+                "Olkeinyiei Primary School",
+                "Lariakorok Primary School",
+                "Katonga Nursery School",
+                "Arjijo Primary School",
+                "Sieku Primary School",
+                "Kurikuri Primary School",
+                "Doldol Primary School",
+                "Ilmukongo Nursery School",
+                "Muruana Irusha Primary School",
+                "Ilingwesi Bandas (Cultural)",
+                "Nandungoru Nursery School",
+                "Chumvi Primary School",
+                "Ethi Primary School",
+                "Ngenia Primary School",
+                "Ngenia Secondary School",
+                "Bokish Nursery School",
+                "Seek Mobile",
+                "Kairigire Primary School",
+                "Kantana Nursery School",
+                "Tasia Mobile",
+                "Melau Nayeu Primary School",
+                "Sirimon Primary School",
+                "Miamoja Primary School",
+                "Enaikishomi Primary School",
+                "Kiibo Farm",
+                "Sior Mobile",
+                "Rotasha Primary School",
+            ],
+        }
 
-        PollingStation.objects.get_or_create(name="Doldol Town Hall", ward=mukogodo_east)
-        PollingStation.objects.get_or_create(name="Mukogodo Forest Centre", ward=mukogodo_west)
-        PollingStation.objects.get_or_create(name="Olmoran Centre", ward=myaka)
-        PollingStation.objects.get_or_create(name="Sosian Ranch Gate", ward=sosian)
+        for ward_name, stations in wards_north.items():
+            ward, _ = Ward.objects.get_or_create(name=ward_name, constituency=north)
+            for name in stations:
+                PollingStation.objects.get_or_create(name=name, ward=ward)
 
         # =====================================================
         # ================= LAIKIPIA WEST =====================
         # =====================================================
 
-        ol_moran, _ = Ward.objects.get_or_create(name="Ol-Moran Ward", constituency=west)
-        rumuruti, _ = Ward.objects.get_or_create(name="Rumuruti Township Ward", constituency=west)
-        githiga, _ = Ward.objects.get_or_create(name="Githiga Ward", constituency=west)
-        marmanet, _ = Ward.objects.get_or_create(name="Marmanet Ward", constituency=west)
-        igwamiti, _ = Ward.objects.get_or_create(name="Igwamiti Ward", constituency=west)
-        salama, _ = Ward.objects.get_or_create(name="Salama Ward", constituency=west)
+        wards_west = {
+            "Ol-Moran Ward": [
+                "Miharati Primary School",
+                "Olmoran Day Secondary School",
+                "Laikipia Ranching Primary School",
+                "Kabati Primary School",
+                "Lariak Primary School",
+                "Wangwachi Primary School",
+                "Sipili Primary School",
+                "Naiborom Primary School",
+                "Makutano Nursery School",
+                "Dimkom Nursery School",
+                "Mahiga Primary School",
+                "Kio Primary School",
+            ],
+            "Rumuruti Township Ward": [
+                "Rumuruti Primary School",
+                "Mutamaiyu Primary School",
+                "Manyatta Primary School",
+                "Ndurumo Primary School",
+                "Mategithi Primary School",
+                "Kagaa Primary School",
+                "Mwireri Primary School",
+                "Machunguru Primary School",
+                "Simotwo Primary School",
+                "Kapkures Primary School",
+                "Ainapmoi Primary School",
+                "Magomano Primary School",
+                "Ol-Arinyiro Primary School",
+                "Othaya OMC Primary School",
+                "Mathuri Nursery School",
+                "Maji Mengi Nursery School",
+                "Samoei Primary School",
+                "Emgwen Mixed Day Secondary School",
+                "GG Rumuruti Boys Secondary School",
+            ],
+            "Githiga Ward": [
+                "Kinamba Primary School",
+                "Kariaini Primary School",
+                "Ng'elesha Primary School",
+                "Ol Arabel Primary School",
+                "Nyakinyua Primary School",
+                "Lobere Primary School",
+                "Tandare Primary School",
+                "Miteta Primary School",
+                "Njorua Primary School",
+                "Mahua Primary School",
+                "Nyakiambi Primary School",
+                "Bustani Primary School",
+                "Milimani Primary School",
+                "Kiwanja Primary School",
+                "Ndindika Primary School",
+                "G.G. Kinamba High School",
+                "Kisima Primary School",
+                "Mbogoini Primary School",
+            ],
+            "Marmanet Ward": [
+                "Naigera Primary School",
+                "Ol' Ngarua Primary School",
+                "Gatirima Primary School",
+                "Thigio Primary School",
+                "Karandi Primary School",
+                "Kiambogo Primary School",
+                "Karaba Primary School",
+                "Kabage Primary School",
+                "Chereta Primary School",
+                "Lerematesho Primary School",
+                "Kangumo Primary School",
+                "Muhotetu Girls Secondary School",
+                "Mairo Primary School",
+                "Melwa Primary School",
+                "Murichu Primary School",
+                "Ndagara Primary School",
+                "Oljabet Primary School",
+                "Marmanet Social Hall",
+                "King'uka Primary School",
+                "Thiru Primary School",
+                "Kwanjiku Primary School",
+                "Mung'etho Primary School",
+                "Manjani Primary School",
+                "Gituamba Primary School",
+                "Munyu Primary School",
+                "Kirima Primary School",
+                "Ng'arachi Primary School",
+                "Lembus Primary School",
+                "Gatami Primary School",
+                "Kambi ya Simba Nursery School",
+                "Muguongo Primary School",
+                "Kiriti Primary School",
+                "Siron Primary School",
+            ],
+            "Igwamiti Ward": [
+                "Muthengera Primary School",
+                "St. Martin Muthengera Academy",
+                "Kang'a Nderitu Community Plot",
+                "Kundarilla Primary School",
+                "Gatero Primary School",
+                "Kite Primary School",
+                "Rwathia Primary School",
+                "P.C.E.A Ngaindeithia Church & Pre-Primary School",
+                "Waimungu Nursery School",
+                "Kiandege Secondary School",
+                "Nyahururu Municipal Council Social Hall",
+                "Municipality Primary School",
+                "Ngarenaro Primary School",
+                "Starehe Primary School",
+                "County Conference Centre",
+                "Manguo Primary School",
+                "Nyahururu Primary School",
+                "Mariakani Primary School",
+                "Maina Primary School",
+                "Thama Primary School",
+                "Nyahururu High School",
+                "Nyandarua Boarding Primary School",
+                "Shamanei Primary School",
+                "Igwamiti Primary School",
+                "Huho-ini Primary School",
+                "Losogwa Primary School",
+                "Uaso Narok Primary School",
+                "Gitundaga Nursery School",
+                "Silale Primary School",
+                "Rugongo Primary School",
+                "Karangi Primary School",
+                "Kigumo Primary School",
+                "Nakwakales Nursery School",
+                "Siberia Nursery School",
+                "Chemichemi Trading Centre",
+                "Kirima Nursery School",
+                "Mahianyu Primary School",
+                "Mt. Angels Primary School",
+                "Nyahururu Municipal Stadium",
+                "Kaichakun Primary School",
+                "Lokiriama Nursery School",
+                "Bethel Primary School",
+                "Munanda Primary School",
+                "Kiheo Primary School",
+                "St Bernard's Secondary School",
+                "Kenya Wildlife Service Station Nyahururu",
+                "Huruma Nursery School",
+            ],
+            "Salama Ward": [
+                "North Tetu Primary School",
+                "Mathira Primary School",
+                "Kiamariga Primary School",
+                "Raya Primary School",
+                "Mutara Primary School",
+                "Marura Primary School",
+                "Keriko Primary School",
+                "Kisiriri Primary School",
+                "Salama Primary School",
+                "Ronda Primary School",
+                "Muruku Primary School",
+                "Nganoine Primary School",
+                "Kiahiti Primary School",
+                "Muruai Primary School",
+                "Matigari Boarding Primary School",
+                "Nguu Primary School",
+                "Ngururiti Nursery School",
+                "Kianjogu Primary School",
+            ],
+        }
 
-        # ================= OL-MORAN =================
-        for name in [
-            "Miharati Primary School",
-            "Olmoran Day Secondary School",
-            "Laikipia Ranching Primary School",
-            "Kabati Primary School",
-            "Lariak Primary School",
-            "Wangwachi Primary School",
-            "Sipili Primary School",
-            "Naiborom Primary School",
-            "Makutano Nursery School",
-            "Dimkom Nursery School",
-            "Mahiga Primary School",
-            "Kio Primary School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=ol_moran)
+        for ward_name, stations in wards_west.items():
+            ward, _ = Ward.objects.get_or_create(name=ward_name, constituency=west)
+            for name in stations:
+                PollingStation.objects.get_or_create(name=name, ward=ward)
 
-        # ================= RUMURUTI TOWNSHIP =================
-        for name in [
-            "Rumuruti Primary School",
-            "Mutamaiyu Primary School",
-            "Manyatta Primary School",
-            "Ndurumo Primary School",
-            "Mategithi Primary School",
-            "Kagaa Primary School",
-            "Mwireri Primary School",
-            "Machunguru Primary School",
-            "Simotwo Primary School",
-            "Kapkures Primary School",
-            "Ainapmoi Primary School",
-            "Magomano Primary School",
-            "Ol-Arinyiro Primary School",
-            "Othaya OMC Primary School",
-            "Mathuri Nursery School",
-            "Maji Mengi Nursery School",
-            "Samoei Primary School",
-            "Emgwen Mixed Day Secondary School",
-            "GG Rumuruti Boys Secondary School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=rumuruti)
-
-        # ================= GITHIGA =================
-        for name in [
-            "Kinamba Primary School",
-            "Kariaini Primary School",
-            "Ng'elesha Primary School",
-            "Ol Arabel Primary School",
-            "Nyakinyua Primary School",
-            "Lobere Primary School",
-            "Tandare Primary School",
-            "Miteta Primary School",
-            "Njorua Primary School",
-            "Mahua Primary School",
-            "Nyakiambi Primary School",
-            "Bustani Primary School",
-            "Milimani Primary School",
-            "Kiwanja Primary School",
-            "Ndindika Primary School",
-            "G.G. Kinamba High School",
-            "Kisima Primary School",
-            "Mbogoini Primary School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=githiga)
-
-        # ================= MARMANET =================
-        for name in [
-            "Naigera Primary School",
-            "Ol' Ngarua Primary School",
-            "Gatirima Primary School",
-            "Thigio Primary School",
-            "Karandi Primary School",
-            "Kiambogo Primary School",
-            "Karaba Primary School",
-            "Kabage Primary School",
-            "Chereta Primary School",
-            "Lerematesho Primary School",
-            "Kangumo Primary School",
-            "Muhotetu Girls Secondary School",
-            "Mairo Primary School",
-            "Melwa Primary School",
-            "Murichu Primary School",
-            "Ndagara Primary School",
-            "Oljabet Primary School",
-            "Marmanet Social Hall",
-            "King'uka Primary School",
-            "Thiru Primary School",
-            "Kwanjiku Primary School",
-            "Mung'etho Primary School",
-            "Manjani Primary School",
-            "Gituamba Primary School",
-            "Munyu Primary School",
-            "Kirima Primary School",
-            "Ng'arachi Primary School",
-            "Lembus Primary School",
-            "Gatami Primary School",
-            "Kambi ya Simba Nursery School",
-            "Muguongo Primary School",
-            "Kiriti Primary School",
-            "Siron Primary School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=marmanet)
-
-        # ================= IGWAMITI =================
-        for name in [
-            "Muthengera Primary School",
-            "St. Martin Muthengera Academy",
-            "Kang'a Nderitu Community Plot",
-            "Kundarilla Primary School",
-            "Gatero Primary School",
-            "Kite Primary School",
-            "Rwathia Primary School",
-            "P.C.E.A. Ngaindeithia Church & Pre-Primary School",
-            "Waimungu Nursery School",
-            "Kiandege Secondary School",
-            "Nyahururu Municipal Council Social Hall",
-            "Municipality Primary School",
-            "Ngarenaro Primary School",
-            "Starehe Primary School",
-            "County Conference Centre",
-            "Manguo Primary School",
-            "Nyahururu Primary School",
-            "Mariakani Primary School",
-            "Maina Primary School",
-            "Thama Primary School",
-            "Nyahururu High School",
-            "Nyandarua Boarding Primary School",
-            "Shamanei Primary School",
-            "Igwamiti Primary School",
-            "Huho-ini Primary School",
-            "Losogwa Primary School",
-            "Uaso Narok Primary School",
-            "Gitundaga Nursery School",
-            "Mukurweini Police Post",
-            "Silale Primary School",
-            "Rugongo Primary School",
-            "Karangi Primary School",
-            "Kigumo Primary School",
-            "Nakwakales Nursery School",
-            "Siberia Nursery School",
-            "Chemichemi Trading Centre",
-            "Kirima Nursery School",
-            "Mahianyu Primary School",
-            "Mt. Angels Primary School",
-            "Nyahururu Municipal Stadium",
-            "Kaichakun Primary School",
-            "Lokiriama Nursery School",
-            "Bethel Primary School",
-            "Munanda Primary School",
-            "Kiheo Primary School",
-            "St Bernard's Secondary School",
-            "Kenya Wildlife Service Station Nyahururu",
-            "Huruma Nursery School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=igwamiti)
-
-        # ================= SALAMA =================
-        for name in [
-            "North Tetu Primary School",
-            "Mathira Primary School",
-            "Kiamariga Primary School",
-            "Raya Primary School",
-            "Mutara Primary School",
-            "Marura Primary School",
-            "Keriko Primary School",
-            "Kisiriri Primary School",
-            "Salama Primary School",
-            "Ronda Primary School",
-            "Muruku Primary School",
-            "Nganoine Primary School",
-            "Kiahiti Primary School",
-            "Muruai Primary School",
-            "Matigari Boarding Primary School",
-            "Nguu Primary School",
-            "Ngururiti Nursery School",
-            "Kianjogu Primary School",
-        ]:
-            PollingStation.objects.get_or_create(name=name, ward=salama)
-
-        self.stdout.write(self.style.SUCCESS("✅ Laikipia location data seeded successfully!"))
+        self.stdout.write(self.style.SUCCESS("✅ Laikipia seed completed successfully"))

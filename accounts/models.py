@@ -20,8 +20,14 @@ image = models.ImageField(upload_to='projects/', blank=True, null=True)
 # LOCATION MODELS
 # =====================================================
 
+from django.db import models
+
+
+# =========================
+# COUNTY
+# =========================
 class County(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -30,56 +36,81 @@ class County(models.Model):
         return self.name
 
 
+# =========================
+# CONSTITUENCY
+# =========================
 class Constituency(models.Model):
     county = models.ForeignKey(
         'accounts.County',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="constituencies"
     )
-
     name = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['name']
+        unique_together = ('county', 'name')
 
     def __str__(self):
         return self.name
 
 
+# =========================
+# WARD
+# =========================
 class Ward(models.Model):
     constituency = models.ForeignKey(
         'accounts.Constituency',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="wards"
     )
-
     name = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['name']
+        unique_together = ('constituency', 'name')
 
     def __str__(self):
         return self.name
 
 
+# =========================
+# POLLING STATION
+# =========================
 class PollingStation(models.Model):
     ward = models.ForeignKey(
         'accounts.Ward',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="polling_stations"
     )
-
     name = models.CharField(max_length=150)
 
     class Meta:
         ordering = ['name']
+        unique_together = ('ward', 'name')
 
     def __str__(self):
         return self.name
 
+
+# =========================
+# COORDINATOR PROFILE
+# =========================
 class CoordinatorProfile(models.Model):
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE)
-    constituency = models.ForeignKey('accounts.Constituency', on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        'accounts.User',
+        on_delete=models.CASCADE,
+        related_name="coordinator_profile"
+    )
+
+    constituency = models.ForeignKey(
+        'accounts.Constituency',
+        on_delete=models.CASCADE,
+        related_name="coordinators"
+    )
 
     def __str__(self):
-        return f"{self.user.username} - Coordinator"
+        return f"{self.user.username} - {self.constituency.name}"
 # =====================================================
 # CUSTOM USER MODEL
 # =====================================================
@@ -116,7 +147,7 @@ class User(AbstractUser):
 
     phone = models.CharField(max_length=20, blank=True, null=True)
 
-    # ================= LOCATION =================
+    # ================= LOCATION (USER RESIDENCE) =================
     county = models.ForeignKey(
         'accounts.County',
         on_delete=models.SET_NULL,
@@ -145,15 +176,10 @@ class User(AbstractUser):
         blank=True
     )
 
-    managed_constituency = models.ForeignKey(
-        'accounts.Constituency',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='coordinators'
-    )
+    # ================= COORDINATOR RESPONSIBILITY =================
+    
 
-    # ================= NEW: VOLUNTEER INTEREST =================
+    # ================= VOLUNTEER INTEREST =================
     volunteer_role = models.CharField(
         max_length=50,
         choices=VOLUNTEER_ROLE_CHOICES,
@@ -167,7 +193,7 @@ class User(AbstractUser):
         blank=True
     )
 
-    # ================= OPTIONAL PROFILE CONTROL =================
+    # ================= PROFILE CONTROL =================
     is_profile_complete = models.BooleanField(default=False)
 
     def __str__(self):

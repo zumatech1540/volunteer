@@ -36,7 +36,7 @@ urlpatterns = [
     # ================= AJAX =================
     path('ajax/constituencies/', views.load_constituencies, name='load_constituencies'),
     path('ajax/wards/', views.load_wards, name='load_wards'),
-    path('ajax/polling/', views.load_polling_stations, name='load_polling'),
+   
     path(
         'load-polling-stations/',
         views.load_polling_stations,
